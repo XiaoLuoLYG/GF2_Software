@@ -47,3 +47,33 @@ def test_get_string(used_names, new_names, name_id, expected_string):
     assert used_names.get_string(name_id) == expected_string
     # Name is absent
     assert new_names.get_string(name_id) is None
+
+
+def test_lookup_append(used_names):
+    """Checks that lookup appends a name if it is not already in the class"""
+    before = len(used_names.names)
+    used_names.lookup(["Andrew"])
+    after = len(used_names.names)
+    assert before + 1 == after
+
+
+def test_lookup_unique_id(used_names, name_string_list):
+    """Test to check that all the of the name ids are unique"""
+    for i in range(0, 2):
+        for j in range(0, 2):
+            if i != j:
+                assert not used_names.lookup(
+                    name_string_list[i]) == used_names.lookup(name_string_list[j])
+            elif i == j:
+                assert used_names.lookup(
+                    name_string_list[i]) == used_names.lookup(name_string_list[j])
+            else:
+                break
+
+
+def test_types(used_names, name_string_list):
+    """Makes sure that the expected type of value is coming out of the main functions"""
+    i = 0
+    while i <= 2:
+        assert (type(used_names.lookup(name_string_list[i]))) is int
+        i += 1
