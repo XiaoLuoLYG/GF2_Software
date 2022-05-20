@@ -1,0 +1,29 @@
+Four main sections:
+1. Gate_information: In this section, we define the basic information for gates used in the circuit, e.g. the type of the gates and how many inputs the gates have 
+2. Initial_devices: In this section, we inistialise the devices 
+3. Connections: In this section, we provide connection details
+4. Monitor_points: In this section, we show the monitor points for the circuit. If this section does not appear, the output will be shown later.
+
+Gate_info = Device_name, {",", Device_name}, Copula, Devices, "with", digit, "inputs",";";
+
+Initial_devices = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", switch_state, "input",["s"],";";
+
+Connection_info = Device_name, Copula, ->, Device_name,".",Gate_input,";";
+
+Monitor_info = "The", "initial", "monitor", "results", Copula, {Device_name, {",", Device_name}},";"; 
+
+Terminal = Gate_info, Initial_devices, {Clock_initial_state}, Connection_info, Monitor_info;
+
+switch_state = "0" | "1";
+
+Clock_initial_state = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", digit, "simulation", "cycles", ";" ;
+
+Devices = "CLOCK" | "SWITCH" | "AND" | "NAND" | "OR" | "NOR" | "DTYPE" | "XOR" ; 
+
+Device_name = letter , { letter | digit };
+
+Gate_input = letter, ( digit );
+
+Copula = "is" | "are";
+
+-> =  "connected", "to";
