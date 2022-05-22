@@ -11,7 +11,7 @@ Device_info = Device_name, {",", Device_name}, Copula, Devices, "with", digit, "
 
 Device_info_input = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", digit, "input",["s"],"}",";";
 
-Connection_info = Device_name, [".",DTYPE_output], ->, Device_name,".",Gate_input,";";
+Connection_info = Device_name, {".",Device_name}, ->, Device_name,".",Gate_input,";";
 
 Clock_initial_state = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", digit, "simulation", "cycles", ";" ;
 
@@ -22,8 +22,6 @@ Devices = "CLOCK" | "SWITCH" | "AND" | "NAND" | "OR" | "NOR" | "DTYPE" | "XOR" ;
 Device_name = letter , { letter | digit };
 
 Gate_input = letter, ( digit );
-
-DTYPE_output= letter, { letter | digit };
 
 Copula = "is" | "are";
 
