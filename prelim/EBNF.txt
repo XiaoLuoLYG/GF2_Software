@@ -1,0 +1,39 @@
+Three main sections:
+1. Devices: In this section, we define the basic information for gates used in the circuit, e.g. the type of the gates and how many inputs the gates have, and initial states of the devices.
+2. Connections: In this section, we provide connection details
+3. Monitor: In this section, we show the monitor points for the circuit. If this section does not appear, the output will be shown later.
+
+Terminal = "Device",":","{",Device_info,Device_info_input, {Clock_initial_state},"}",
+"Connection",":","{", Connection_info,"}",
+"Monitor",":","{", Monitor_info,"}";
+
+Device_info = Device_name, {",", Device_name}, Copula, Devices, "with", digit, "inputs",";"；
+
+Device_info_input = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", digit, "input",["s"],"}",";";
+
+Connection_info = Device_name, {".",Device_name}, ->, Device_name,".",Gate_input,";";
+
+Clock_initial_state = Device_name, {",", Device_name}, Copula, Devices, "initially", "with", digit, "simulation", "cycles", ";" ;
+
+Monitor_info =  {Device_name, {",", Device_name}},";"; 
+
+Devices = "CLOCK" | "SWITCH" | "AND" | "NAND" | "OR" | "NOR" | "DTYPE" | "XOR" ; 
+
+Device_name = letter , { letter | digit };
+
+Gate_input = letter, ( digit );
+
+Copula = "is" | "are";
+
+-> =  "->";
+
+letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
+       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
+       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
+       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
+       | "x" | "y" | "z" ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
