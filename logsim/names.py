@@ -92,9 +92,7 @@ class Names:
         If the name string is not present in the names list, add it.
         """
         #Input error handling
-        if not isinstance(name_string_list, str):
-            raise TypeError("Expected name_string to be a string.")
-        if type(name_string_list) != list:
+        if not isinstance(name_string_list, list):
             raise TypeError("Expected list input.")
 
         ids=[]
@@ -106,7 +104,7 @@ class Names:
             else:
                 id = self.names.index(name_string)
             ids.append(id)
-        return id
+        return ids
 
 
 

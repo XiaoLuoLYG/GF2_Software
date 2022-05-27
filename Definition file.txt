@@ -12,24 +12,24 @@ CLK2 is CLOCK intially with 5 simulation cycles;
 }
 
 Connection : {
-SW1 -> A.a1;
-CLK1 -> A.a2;
-CLK1 -> B.b1;
-SW2 -> B.b2;
-SW1 -> C.c1;
-A -> C.c2;
-A -> D.d1;
-CLK1 -> D.d2;
-C -> E.e1;
-D -> E.e2;
-CLK2 -> FF.ffclock;
-B -> FF.ffdata;
-B -> FF.ffset;
-A -> FF.ffclear;
-FF.q -> G.g1;
-FF.qbar -> G.g2;
-E ->H.h1;
-G -> H.h2;
+SW1 connect A.a1;
+CLK1 connect A.a2;
+CLK1 connect B.b1;
+SW2 connect B.b2;
+SW1 connect C.c1;
+A connect C.c2;
+A connect D.d1;
+CLK1 connect D.d2;
+C connect E.e1;
+D connect E.e2;
+CLK2 connect FF.ffclock;
+B connect FF.ffdata;
+B connect FF.ffset;
+A connect FF.ffclear;
+FF.q connect G.g1;
+FF.qbar connect G.g2;
+E connectH.h1;
+G connect H.h2;
 }
 
 Monitor : {
@@ -44,14 +44,14 @@ CLK is CLOCK initially with 10 simulation cycles;
 }
 
 Connection : {
-SW1 -> N1.I1;
-CLK -> N1.I2;
-CLK -> N2.I3;
-SW2 -> N2.I4;
-N1 -> N3.I5;
-N4 -> N3.I6;
-N2 -> N4.I7;
-N3 -> N4.I8;
+SW1 connect N1.I1;
+CLK connect N1.I2;
+CLK connect N2.I3;
+SW2 connect N2.I4;
+N1 connect N3.I5;
+N4 connect N3.I6;
+N2 connect N4.I7;
+N3 connect N4.I8;
 }
 
 Monitor : {
