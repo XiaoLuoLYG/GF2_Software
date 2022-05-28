@@ -3,9 +3,9 @@
 Writen by Lea """
 
 import pytest
-from main_project.names import Names
-from main_project.scanner import Scanner
-from main_project.error import SyntaxError, SemanticError, ValueError, UnclassedError
+from names import Names
+from scanner import Scanner
+# from main_project.error import SyntaxError, SemanticError, ValueError, UnclassedError
 
 '''Test the scanner module'
 
@@ -79,38 +79,40 @@ def test_get_name_and_num(new_scanner, new_names):
     assert number[1] == " "
 
 
-@pytest.mark.parametrize("data, expected_output_type, expected_output_id", [("DEVICES",
-                                                                             0, "ignore"), ("NAND", 3, "ignore"), ("device", 1, "ignore"),
-                                                                            ("A12J", 3, "ignore"), (";", 8, "ignore"), ("12", 2, "ignore")])
+@pytest.mark.parametrize("data, expected_output_type, expected_output_id", 
+                         [("Device",4, 0), ("NAND", 8, 10), ("device", 4, 1),
+                           ("A12J", 8, 10), (";", 1, None), ("12", 5, None)])
 def test_get_symbol(new_names, data, expected_output_type, expected_output_id):
     """Test that names, numbers, symbols and keywords are all
     initialised and stored in the right sections"""
     test_scan = Scanner(data, new_names, True)
     val = test_scan.get_symbol()
+    print(val.id)
     assert val.type == expected_output_type
+    assert val.id == expected_output_id
 
 
-def test_arrow_recognition(new_names):
+def test_dot_recognition(new_names):
     """Tests the recognition of an arrow symbol """
-    test_scan = Scanner("=>", new_names, True)
+    test_scan = Scanner(".", new_names, True)
     val = test_scan.get_symbol()
-    assert val.type == 5
+    assert val.type == 2
 
 
 def test_get_symbol_ignore():
     empty_names = Names()
     """check that the words in the scanner.ignore list are not appended to the name class"""
-    test_strings = ('gates', 'gate', 'initially', '  initially')
+    test_strings = ('gates', 'gate', 'initially', '  initially', "cycles")
     before = len(empty_names.names)
     for word in test_strings:
         test_scan = Scanner(word, empty_names, True)
-        # this will make symbols for all 11 defined symbols, but none for the ignored strings inputed
+        # this will make symbols for all 10 defined symbols, but none for the ignored strings inputed
         val = test_scan.get_symbol()
         assert val is None
     after_num = len(empty_names.names)
-    assert before + 12 == after_num
-    assert empty_names.names == ["devices", "connections", "monitor", "are", "is", "have", "has",
-                                 "set", "to", "cycle", "trace", "device"]
+    assert before + 10 == after_num
+    assert empty_names.names == ["Device", "device", "with", "Connection", "Monitor", "is", "are", "input", 
+        "simulation", "connect"]
 
 
 def test_wordcount(new_names):
@@ -121,26 +123,28 @@ def test_wordcount(new_names):
     after = []
     before.append(len(new_names.names))
     before.append(0)
-    test_scan = Scanner("A1 to A2.I4", new_names, True)
+    test_scan = Scanner("A1 connect A2.I4", new_names, True)
     i = 0
     while i <= 4:
         test_scan.get_symbol()
         i += 1
     after.append(len(new_names.names))
     after.append(test_scan.word_number)
-    assert after[0] == before[0] + 3
-    assert after[1] == before[1] + 5
+    print(after)
+    print(before)
+    assert after[0] == before[0] + 3 #name list length (no keywords or dot etc.)
+    assert after[1] == before[1] + 5 #word number
 
 
 def test_non_valid_symbol(new_names):
     """Test that the non valid characters and names raise the approrpiate errors"""
     with pytest.raises(SyntaxError):
         Scanner(" +", new_names, True).get_symbol()  # + is not a valid symbol
-        Scanner(" 4fjd", new_names, True).get_symbol()
+        #Scanner(" 4fjd", new_names, True).get_symbol() #non alphanumeric
 
 
 @pytest.mark.parametrize("inputs, outputs", [("#hello \nh", "\n"),
-                                             ("//hello \n world //h", "/")])
+                                             ("//hello \n world //h", "h")])
 def test_comments(inputs, outputs, new_names):
     """Testing that the scanner skips over the two error types correctly"""
     new_scan = Scanner(inputs, new_names, True)
