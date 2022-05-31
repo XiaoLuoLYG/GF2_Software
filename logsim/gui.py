@@ -48,7 +48,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                                            operations.
     """
 
-    def __init__(self, parent, devices, monitors):
+    def __init__(self, parent, devices, monitors, network):
         """Initialise canvas properties and useful variables."""
         super().__init__(parent, -1,
                          attribList=[wxcanvas.WX_GL_RGBA,
@@ -66,6 +66,12 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Initialise variables for zooming
         self.zoom = 1
+
+        self.names = Names()
+        self.devices = Devices(self.names)
+        self.network = Network(self.names, self.devices)
+        self.monitors = Monitors(self.names, self.devices, self.network)
+        self.signals = []
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -102,6 +108,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.render_text(text, 10, 10)
 
         # Draw a sample signal trace
+        
         GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
         GL.glBegin(GL.GL_LINE_STRIP)
         for i in range(10):
@@ -114,6 +121,34 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             GL.glVertex2f(x, y)
             GL.glVertex2f(x_next, y)
         GL.glEnd()
+        
+        #Draw signal simulation
+
+        if len(self.signals) > 0:
+            # ruler
+            for i in range(0, len(self.signals[0][-1])):
+                GL.glColor3f(0, 0, 0)
+                self.render_text(str(i), 100 + i*self.scale_x,
+                                 self.size.height - 30)
+                GL.glColor3f(0.8, 0.8, 0.8)
+                GL.glLineWidth(1.0)
+                GL.glBegin(GL.GL_LINES)
+                GL.glVertex2f(100 + i*self.scale_x, self.size.height - 40)
+                GL.glVertex2f(100 + i*self.scale_x, 0)
+                GL.glEnd()
+
+            # signal
+            count = 1
+            for sig in self.signals:
+                GL.glColor3f(sig[1][0], sig[1][1], sig[1][2])
+                GL.glLineWidth(3.0)
+                self.draw_signal(
+                    sig[-1], (100, self.size.height - count*2*self.scale_y))
+
+                GL.glClearColor(1.0, 1.0, 1.0, 0.0)
+                self.render_text(
+                    sig[0], 50, self.size.height - count*2*self.scale_y)
+                count += 1
 
         # We have been drawing to the back buffer, flush the graphics pipeline
         # and swap the back buffer to the front
@@ -203,6 +238,24 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             else:
                 GLUT.glutBitmapCharacter(font, ord(character))
 
+    def draw_signal(self, signal, offset):
+        self.max_x = self.scale_x * (len(signal)-1)
+
+        GL.glBegin(GL.GL_LINE_STRIP)
+        for i, val in enumerate(signal):
+            if val == 1:
+                GL.glVertex2f(offset[0]+i*self.scale_x, offset[1])
+            else:
+                GL.glVertex2f(offset[0]+i*self.scale_x, offset[1]+self.scale_y)
+
+            try:
+                next_val = (1-signal[i+1]) * self.scale_y
+                GL.glVertex2f(offset[0]+i*self.scale_x, offset[1] + next_val)
+            except IndexError:
+                pass
+
+        GL.glEnd()
+        return
 
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
@@ -240,7 +293,7 @@ class Gui(wx.Frame):
         self.SetMenuBar(menuBar)
 
         # Canvas for drawing signals
-        self.canvas = MyGLCanvas(self, devices, monitors)
+        self.canvas = MyGLCanvas(self, devices, monitors, network)
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, "Cycles")

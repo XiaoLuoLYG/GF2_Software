@@ -74,7 +74,7 @@ class Scanner:
                 sys.exit()
 
         #Resevered words and IDs
-        self.names = names
+        self.names = Names()
         self.symbol_type_list = [self.COMMA, self.SEMICOLON, self.DOT, self.LINECOMMENT,
                                 self.KEYWORD, self.NUMBER, self.CURLY_OPEN, self.CURLY_CLOSE,
                                 self.NAME, self.EOF, self.BULKCOMMENT] = range(11)
