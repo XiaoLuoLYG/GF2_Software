@@ -67,10 +67,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         # Initialise variables for zooming
         self.zoom = 1
 
-        self.names = Names()
-        self.devices = Devices(self.names)
-        self.network = Network(self.names, self.devices)
-        self.monitors = Monitors(self.names, self.devices, self.network)
+        self.devices = devices
+        self.network = network
+        self.monitors = monitors
         self.signals = []
 
         # Bind events to the canvas
