@@ -1,5 +1,4 @@
 """Implement the graphical user interface for the Logic Simulator.
-
 Used in the Logic Simulator project to enable the user to run the simulation
 or adjust the network properties.
 
@@ -63,6 +62,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.pan_y = 0
         self.last_mouse_x = 0  # previous mouse x position
         self.last_mouse_y = 0  # previous mouse y position
+
+        self.scale_x = 50
+        self.scale_y = 50
 
         # Initialise variables for zooming
         self.zoom = 1
@@ -347,3 +349,38 @@ class Gui(wx.Frame):
         text_box_value = self.text_box.GetValue()
         text = "".join(["New text box value: ", text_box_value])
         self.canvas.render(text)
+
+    #run simulation
+    def run(self, num, reset=False):
+        self.canvas = MyGLCanvas(self, parent.devices,
+                        parent.monitors, parent.network)
+        if reset:
+            self.parent.monitors.reset_monitors()
+            self.colours = []
+            for i in range(len(self.parent.monitors.monitors_dictionary)):
+                self.colours.append(
+                    (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
+
+        for _ in range(num):
+            if self.parent.network.execute_network():
+                self.parent.monitors.record_signals()
+            else:
+                print(_("Error! Network oscillating."))
+
+        self.canvas.signals = []
+        self.canvas3d.signals = []
+
+        count = 0
+        for (device_id, output_id), value in self.parent.monitors.monitors_dictionary.items():
+            monitor_name = self.parent.devices.get_signal_name(
+                device_id, output_id)
+            self.canvas.signals.append(
+                [monitor_name, self.colours[count], value])
+            self.canvas3d.signals.append(
+                [monitor_name, self.colours[count], value])
+            count += 1
+
+        try:
+            self.canvas.render()
+        except wx._core.wxAssertionError:
+            pass

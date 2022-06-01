@@ -30,7 +30,8 @@ class Symbol:
         """Initialise symbol properties."""
         self.type = None
         self.id = None
-
+        self.line_number = None
+        self.position = None
 
 class Scanner:
 
@@ -52,56 +53,63 @@ class Scanner:
                       and returns the symbol.
     """
 
-    def __init__(self, path, names,string=False):
+    def __init__(self, path, names, string=False):
 
         """Open specified file and initialise reserved words and IDs."""
         """
         Open files
-        For test purpose, introduce another input: string. 
+        For test purpose, introduce another input: string.
         If true, instead open file, used created string as input.
         """
-        if string: 
+        if string:
             self.read_as_string = True
-            self.input_file = path #input string
+            self.input_file = path   # input string
             self.character_count = 0
         else:
             self.read_as_string = False
             try:
-                self.input_file = open(path, 'r') #input file
+                self.input_file = open(path, 'r')   # input file
             except FileNotFoundError:
                 raise FileNotFoundError(
                     "Error: File doesn't exist in current directory")
                 sys.exit()
 
-        #Resevered words and IDs
-        self.names = names #??
-        self.symbol_type_list = [self.COMMA, self.SEMICOLON, self.DOT, self.LINECOMMENT,
-                                self.KEYWORD, self.NUMBER, self.CURLY_OPEN, self.CURLY_CLOSE,
-                                self.NAME, self.EOF, self.BULKCOMMENT] = range(11)
-        '''start of sections
-        self.start_list = ["Device", "Connection", "Monitor"] 
-        [self.DEVICES_ID, self.CONNECTION_ID, self.MONITOR_ID] = self.names.lookup(self.start_list)
-        '''
-        self.keywords_list = ["Device", "device", "with", "Connection", "Monitor", "is", "are", "input", 
-        "simulation", "connect"] #keyword that cannot be ignored
-        [self.DEVICE_ID, self.DEVICE_LOWER_ID, self.WITH_ID, self.CONNECTION_ID, self.MONITOR_ID, self.IS_ID, self.ARE_ID,
-         self.INPUT_ID, self.SIMULATION_ID, self.CONNECT_ID] = self.names.lookup(self.keywords_list)
-        
+        # Resevered words and IDs
+        self.names = names
+        self.symbol_type_list = [self.COMMA, self.SEMICOLON, self.DOT,
+                                 self.LINECOMMENT, self.KEYWORD, self.NUMBER,
+                                 self.CURLY_OPEN, self.CURLY_CLOSE, self.NAME,
+                                 self.EOF, self.BULKCOMMENT] = range(11)
+
+        # keyword that cannot be ignored
+        self.keywords_list = ["Device", "device", "with", "Connection",
+                              "Monitor", "is", "are", "input",
+                              "simulation", "connect"]
+
+        [self.DEVICE_ID, self.DEVICE_LOWER_ID, self.WITH_ID,
+         self.CONNECTION_ID, self.MONITOR_ID, self.IS_ID, self.ARE_ID,
+         self.INPUT_ID, self.SIMULATION_ID,
+         self.CONNECT_ID] = self.names.lookup(self.keywords_list)
+
+        # ignore
         self.ignore = ["gate", "gates", "a", "an",
-            "some", "initially", "inputs", "connected", "cycles"]#ignore 
+                       "some", "initially", "inputs", "connected", "cycles"]
         self.ending_symbols = [self.SEMICOLON, self.CURLY_CLOSE, self.EOF]
-        
-        #initialise
+
+        # initialise
         self.current_character = " "
-        self.character_number = 0
         self.word_number = 0
+        self.current_line_number = 0
+        self.current_position = 0
 
     def get_symbol(self):
         """Translate the next sequence of characters into a symbol."""
         symbol = Symbol()
-        self.skip_spaces() # current character now not whitespace
+        self.skip_spaces()  # current character now not whitespace
+        symbol.line_number = self.current_line_number
+        symbol.position = self.current_position
 
-        if self.current_character.isalpha(): # name
+        if self.current_character.isalpha():  # name
             name_string_list = self.get_name()
             self.name_string = name_string_list[0]
             if self.name_string in self.ignore:
@@ -111,19 +119,20 @@ class Scanner:
                 symbol.id = self.names.query(self.name_string)
             else:
                 symbol.type = self.NAME
-                #symbol.id = self.names.query(self.name_string)
+                # symbol.id = self.names.query(self.name_string)
                 [symbol.id] = self.names.lookup([self.name_string])
 
             print(self.name_string, end=' ')
 
-        elif self.current_character.isdigit(): # number
+        elif self.current_character.isdigit():  # number
             number_get = self.get_number()[0]
-            #[symbol.id] = self.names.lookup([number_get])
+            # [symbol.id] = self.names.lookup([number_get])
             symbol.type = self.NUMBER
             print(number_get, end=' ')
 
         elif self.current_character == ",":
             symbol.type = self.COMMA
+            print(".", end=' ')
             self.advance()
 
         elif self.current_character == "{":
@@ -147,38 +156,42 @@ class Scanner:
             print(".", end=' ')
         # etc for other punctuation
 
-        elif self.current_character == "#": # single line comment
+        elif self.current_character == "#":  # single line comment
             x = 0
             symbol.type = self.LINECOMMENT
             while x < 1:
                 self.advance()
-                while self.current_character != "\n":  # ignore until end of line
+                # ignore until end of line
+                while self.current_character != "\n":
                     self.advance()
                 x += 1
-        
-        elif self.current_character == "/": #bulk comment, expect another (//blabla//)
+        # bulk comment, expect another (//blabla//)
+        elif self.current_character == "/":
             symbol.type = self.BULKCOMMENT
             self.advance()
-            if self.current_character == "/":  # start bulk comment, start ignoring
+            # start bulk comment, start ignoring
+            if self.current_character == "/":
                 consec_slashes = 0
-                while consec_slashes < 2:  # ignore until two consecutive slashes
+                # ignore until two consecutive slashes
+                while consec_slashes < 2:
                     if self.current_character == "/":
                         consec_slashes += 1
                         symbol.type = self.BULKCOMMENT
-                        #self.advance() 
+                        # self.advance()
                     elif self.current_character == "":
-                        raise SyntaxError("Reached end of file while still in a bulk comment")
+                        raise SyntaxError("eof while still in a bulk comment")
                         break
                     else:
                         consec_slashes = 0
                 self.advance()
             '''else:
-                raise SyntaxError("Unexpected symbol, expected '//' at beginning of bulk comment")'''
-        
-        elif self.current_character == "": # end of file
+                raise SyntaxError("Unexpected symbol,
+                expected '//' at beginning of bulk comment")'''
+
+        elif self.current_character == "":  # end of file
             symbol.type = self.EOF
 
-        else: # not a valid character
+        else:  # not a valid character
             raise SyntaxError("Error: Invalid character encounter")
 
         self.word_number += 1
@@ -186,7 +199,7 @@ class Scanner:
 
     def advance(self):
         """reads one further character into the document"""
-        if self.read_as_string: #test string input
+        if self.read_as_string:  # test string input
             try:
                 self.current_character = self.input_file[self.character_count]
             except IndexError:
@@ -194,16 +207,20 @@ class Scanner:
                 return self.current_character
             self.character_count += 1
         else:
-            self.current_character = self.input_file.read(1) #file input
+            self.current_character = self.input_file.read(1)  # file input
 
-        self.character_number += 1
+        self.current_position += 1
+
+        if self.current_character == "\n":
+            self.current_line_number += 1
+            self.current_position = -1
 
         return self.current_character
 
     def get_name(self):
         """Seek the next name string in input_file.
 
-        Return the name string (or None) and the next non-alphanumeric character.
+        Return the name string(or None)and the next non-alphanumeric character.
         """
         name = self.current_character
 
@@ -232,4 +249,3 @@ class Scanner:
 
         while self.current_character.isspace():
             self.current_character = self.advance()
-
