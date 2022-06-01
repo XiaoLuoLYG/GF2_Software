@@ -1,5 +1,5 @@
 #Example 2
-Device : {
+Device  {
 A,B are OR with 2 inputs;
 C is NAND with 2 inputs;
 D,E are AND with 2 inputs;
@@ -11,7 +11,7 @@ CLK1 is CLOCK initially with 10 simulation cycles;
 CLK2 is CLOCK intially with 5 simulation cycles;
 }
 
-Connection : {
+Connection  {
 SW1 connect A.a1;
 CLK1 connect A.a2;
 CLK1 connect B.b1;
@@ -32,18 +32,18 @@ E connectH.h1;
 G connect H.h2;
 }
 
-Monitor : {
+Monitor  {
 A, D, E, FF, G;
 }
 
 #Example 1
-Device : {
+Device  {
 N1, N2, N3, N4 are NAND with 2 inputs;
 SW1, SW2 are SWITCH initially with 0 input;
 CLK is CLOCK initially with 10 simulation cycles;
 }
 
-Connection : {
+Connection  {
 SW1 connect N1.I1;
 CLK connect N1.I2;
 CLK connect N2.I3;
@@ -54,6 +54,6 @@ N2 connect N4.I7;
 N3 connect N4.I8;
 }
 
-Monitor : {
+Monitor  {
 N1,N2;
 }
