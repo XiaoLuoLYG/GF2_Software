@@ -173,8 +173,7 @@ class Parser:
     def parse_device(self):
         # e.g A,B are OR with 2 inputs
         self.symbol = self.scanner.get_symbol()
-        device_info = []
-        #  A,B....
+        device_info = [] 
         if self.symbol.type == self.scanner.NAME:
             device_info.append(self.symbol.id)
             self.symbol = self.scanner.get_symbol()
@@ -306,16 +305,28 @@ class Parser:
             self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_monitor(self):
-        self.symbol = self.scanner.get_symbol()
-        if self.symbol.type == self.scanner.NAME:
-            if self.symbol.id in self.devices.gate_types or self.symbol.id in self.devices.device_types:
-                
-                monitor_error = self.monitors.make_monitors(self.symbol.id, None)
-                if monit                
-
+        monitor_info = []
+        while self.symbol.type != self.scanner.CURLY_CLOSE:
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type == self.scanner.NAME:
+                if self.symbol.id in self.devices.gate_types or self.symbol.id in self.devices.device_types:
+                    monitor_info.append(self.symbol.id)
+                    self.symbol = self.scanner.get_symbol()
+                    if self.symbol.type == self.symbol.COMMA:
+                        self.symbol = self.scanner.get_symbol()
+                    else:
+                        self.display_error(self.NO_COMMA)
+                else:
+                    self.display_error(self.NO_DEVICE)
+                    break
             else:
-                self.display_error(self.NO_DEVICE)
-    
+                self.dissplay_error(self.INVALID_DEVICE_NAME)
+
+        if self.error_count == 0:
+            for i in monitor_info:
+                monitor_error_type = self.monitors.make_monitor(i,None)
+                if monitor_error_type != self.monitors.NO_ERROR:
+                    self.display_error(monitor_error_type)
 
     def ignore_none(self):
         while self.symbol.type == None:
@@ -324,5 +335,5 @@ class Parser:
 
     def display_error(self, error_type):
         self.error_count += 1
-        print(self.error_dict[error_type])
+        print(self.scanner.lines[self.symbol.line_number]+ "" * self.symbol.position + "^" + self.error_dict[error_type])
 
