@@ -10,8 +10,8 @@ Parser - parses the definition file and builds the logic network.
 """
 
 
-from zmq import device
-from Software_Groupwork.logsim.scanner import Scanner
+# from zmq import device
+# from logsim.scanner import Scanner
 
 
 class Parser:
@@ -45,47 +45,59 @@ class Parser:
         self.monitors = monitors
         self.scanner = scanner
         self.symbol = self.scanner.get_symbol()
-        
-
         # error
-        [ self.NO_SECTIONS, self.NO_DEVICE_SECTION, self.NO_CONNECTION_SECTION, self.NO_MONITOR_SECTION, self.NO_LINKING_VERB, self.NO_SEMICOLON, self.NO_COMMA, self.NO_DOT, self.NO_CURLY_OPEN, self.NO_CURLY_CLOSE, self.NO_DEVICE, self.NO_NUM, self.NO_CONNECT_SYMBOL, self.INVALID_DEVICE_NAME, self.INVALID_DEVICE_TYPE, self.INVALID_PORT
-        ] = self.names.unique_error_codes(17)
+        [self.NO_SECTIONS,
+         self.NO_DEVICE_SECTION,
+         self.NO_CONNECTION_SECTION,
+         self.NO_MONITOR_SECTION,
+         self.NO_LINKING_VERB,
+         self.NO_SEMICOLON,
+         self.NO_COMMA,
+         self.NO_DOT,
+         self.NO_CURLY_OPEN,
+         self.NO_CURLY_CLOSE,
+         self.NO_DEVICE,
+         self.NO_NUM,
+         self.NO_CONNECT_SYMBOL,
+         self.INVALID_DEVICE_NAME,
+         self.INVALID_DEVICE_TYPE,
+         self.INVALID_PORT
+         ] = self.names.unique_error_codes(16)
 
-        self.error_dict ={
+        self.error_dict = {
             # Sytanx error
             self.NO_SECTIONS : "Error: Expected a keyword. Expected keywords: DEVICES, CONNECTIONS and MONITORS",
             self.NO_DEVICE_SECTION : "Error: Expected a device section",
             self.NO_CONNECTION_SECTION: "Error: Expected a connection section",
             self.NO_MONITOR_SECTION: "Error: Expected a monitor sectoin",
             self.NO_LINKING_VERB: "Error: Expected a linking verb",
-            self.NO_SEMICOLON : "Error: Expected a ':'",
-            self.NO_COMMA : "Error: Expected a ','",
-            self.NO_DOT : "Error: Expected a '.'",
+            self.NO_SEMICOLON: "Error: Expected a ':'",
+            self.NO_COMMA: "Error: Expected a ','",
+            self.NO_DOT: "Error: Expected a '.'",
             self.NO_CURLY_OPEN: "Error: Expected a '{'",
             self.NO_CURLY_CLOSE: "Error: Expected a '}'",
             self.NO_DEVICE: "Error: Expected a device",
             self.NO_NUM: "Error: Expected a number",
             self.NO_CONNECT_SYMBOL: "Error: Expected a connect symbol",
             self.INVALID_DEVICE_NAME: "Error: Invalid device name",
-            self.INVALID_DEVICE_TYPE:"Error: No such a device",
+            self.INVALID_DEVICE_TYPE: "Error: No such a device",
             self.INVALID_PORT: "Error: Invalid port",
 
             # Semantic errors
             network.INPUT_TO_INPUT: "Error: Both ports are inputs",
             network.OUTPUT_TO_OUTPUT: "Error: Both ports are outputs",
             network.INPUT_CONNECTED: "Error: Input is already in a connection",
-            network.PORT_ABSENT: "Error: Second_port_id is not a valid input or output port",
+            network.PORT_ABSENT: "Error: Second port is not a valid port",
             network.DEVICE_ABSENT: "Error: NO such a device",
 
             devices.INVALID_QUALIFIER: "Error: Invalid qualifier",
             devices.NO_QUALIFIER: "Error: No qualifier",
-            devices.NO_HALF_PERIOD: "Errpr: No half period",
             devices.BAD_DEVICE: "Error: bad device",
             devices.QUALIFIER_PRESENT: "Error: Qualifier present",
             devices.DEVICE_PRESENT: "Error: Device present",
-            monitors.NOT_OUTPUT : "Error: Not output",
-            monitors.MONITOR_PRESENT : "Error: Monitor present",
-            device.network.DEVICE_ABSENT: "Error: NO such a device"
+            monitors.NOT_OUTPUT: "Error: Not output",
+            monitors.MONITOR_PRESENT: "Error: Monitor present",
+            # devices.network.DEVICE_ABSENT: "Error: No such a device"
         }
         self.error_count = 0
 
@@ -93,7 +105,6 @@ class Parser:
         self.device_section = False
         self.connection_section = False
         self.monitor_section = False
-
 
     def parse_network(self):
         """Parse the circuit definition file."""
@@ -106,7 +117,7 @@ class Parser:
             if self.symbol.type == self.scanner.KEYWORD:
                 # Device
                 if self.symbol.id == self.scanner.DEVICE_ID:
-                    self.device_section = True 
+                    self.device_section = True
                     self.parse_sections('DEVICE')
 
                 # Connection
@@ -120,7 +131,7 @@ class Parser:
                     else:
                         self.display_error(self.NO_DEVICE_SECTION)
                         break
-                    
+
                 # Monitor
                 if self.symbol.id == self.scanner.MONITOR_ID:
                     self.monitor_section = True
@@ -137,22 +148,22 @@ class Parser:
         # check whether we have the monitor section
         if not self.monitor_section:
             self.display_error(self.NO_MONITOR_SECTION)
-            
+
         return True
 
-    def parse_sections(self,KEYWORD):
+    def parse_sections(self, KEYWORD):
         # check the CURLY_OPEN
         while True:
             self.symbol == self.scanner.get_symbol()
             if self.symbol.type == self.scanner.CURLY_OPEN:
                 break
 
-            elif self.symbol.type == None:
+            elif self.symbol.type is None:
                 continue
-            
+
             else:
                 self.display_error(self.NO_CURLY_OPEN)
-        
+
         # parse the section and check the CURLY_CLOSE
         while self.symbol.type != self.scanner.CURLY_CLOSE:
 
@@ -169,11 +180,10 @@ class Parser:
                 self.display_error(self.NO_CURLY_CLOSE)
                 break
 
-
     def parse_device(self):
         # e.g A,B are OR with 2 inputs
         self.symbol = self.scanner.get_symbol()
-        device_info = [] 
+        device_info = []
         if self.symbol.type == self.scanner.NAME:
             device_info.append(self.symbol.id)
             self.symbol = self.scanner.get_symbol()
@@ -187,36 +197,41 @@ class Parser:
                     self.symbol = self.scanner.get_symbol()
             #  is / are
             if self.symbol.type == self.symbol.KEYWORD:
-                if self.symbol.id == self.scanner.IS_ID or self.symbol.id == self.scanner.ARE_ID:
-                    self.symbol  = self.scanner.get_symbol()
+                if (self.symbol.id == self.scanner.IS_ID or
+                        self.symbol.id == self.scanner.ARE_ID):
+                    self.symbol = self.scanner.get_symbol()
                     #  OR... Devices
                     if self.symbol.type == self.scanner.NAME:
-                        if self.symbol.id in self.devices.gate_types or self.symbol.id in self.devices.devcie_types:
+                        if (self.symbol.id in self.devices.gate_types or
+                                self.symbol.id in self.devices.devcie_types):
                             device_type = self.symbol.id
 
                             # ignore 'with'
-                            self.symbol = self.scanner.get_symbol() 
+                            self.symbol = self.scanner.get_symbol()
                             self.ignore_none()
 
                             # 2. Number
                             if self.symbol.type == self.scanner.NUMBER:
-                                
+
                                 if self.error_count == 0:
                                     device_property = self.symbol.id
                                     for i in device_info:
-                                        device_error_type = self.devices.make_device(i,device_type,device_property)
-                                        if device_error_type != self.devices.NO_ERROR:
-                                            self.display_error(device_error_type)
+                                        device_er = self.devices.make_device(
+                                            i,
+                                            device_type,
+                                            device_property)
+                                        if device_er != self.devices.NO_ERROR:
+                                            self.display_error(
+                                                device_er)
                                             break
                                 # ignore 'input'
                                 self.symbol = self.scanner.get_symbol()
-                                
+
                                 self.ignore_none()
-                                
 
                                 if self.symbol.type == self.scanner.SEMICOLON:
                                     self.symbol = self.scanner.get_symbol()
-                                
+
                                 else:
                                     self.display_error(self.NO_SEMICOLON)
 
@@ -232,7 +247,7 @@ class Parser:
                 else:
                     self.display_error(self.NO_LINKING_VERB)
         else:
-            self.display_error(self.INVALID_DEVICE_NAME)         
+            self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_connecction(self):
         # e.g FF.q connect G.g1
@@ -252,22 +267,22 @@ class Parser:
                     self.display_error(self.NO_DOT)
 
                 # PORT
-                self.symbol =self.scanner.get_symbol()
-                
+                self.symbol = self.scanner.get_symbol()
+
                 if self.symbol.id not in self.devices.dtype_output_ids:
                     self.display_error(self.INVALID_PORT)
 
                 first_device_port_id = self.symbol.id
-            
+
             else:
-                first_device_port_id =  None
+                first_device_port_id = None
 
             #  CONNECT
             self.symbol = self.scanner.get_symbol()
             if self.symbol.id == self.scanner.CONNECT_ID:
                 self.symbol = self.scanner.get_symbol()
 
-            else:  
+            else:
                 self.display_error(self.NO_CONNECT_SYMBOL)
 
             #  Device
@@ -275,9 +290,8 @@ class Parser:
             second_device = self.devices.get_device(self.symbol.id)
 
             # if second_device is None:
-
             #     self.display_error(self.NO_DEVICE)
-            
+
             self.symbol = self.scanner.get_symbol()
             # DOT
             if self.symbol.type != self.scanner.DOT:
@@ -286,21 +300,25 @@ class Parser:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.NAME:
                 self.display_error(self.INVALID_DEVICE_NAME)
-            
+
             second_device_port_id = self.symbol.id
 
             self.symbol = self.scanner.get_symbol()
 
             if self.symbol.type != self.scanner.SEMICOLON:
                 self.display_error(self.NO_SEMICOLON)
-            
+
             self.symbol = self.scanner.get_symbol()
 
             if self.error_count == 0:
-                error_type = self.network.make_connection(first_device.device_id, first_device_port_id, second_device.device_id, second_device_port_id)
+                error_type = self.network.make_connection(
+                    first_device.device_id,
+                    first_device_port_id,
+                    second_device.device_id,
+                    second_device_port_id)
                 if error_type != self.network.NO_ERROR:
                     self.display_error(error_type)
-                    
+
         else:
             self.display_error(self.INVALID_DEVICE_NAME)
 
@@ -309,7 +327,9 @@ class Parser:
         while self.symbol.type != self.scanner.CURLY_CLOSE:
             self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.NAME:
-                if self.symbol.id in self.devices.gate_types or self.symbol.id in self.devices.device_types:
+                if (
+                    self.symbol.id in self.devices.gate_types or
+                        self.symbol.id in self.devices.device_types):
                     monitor_info.append(self.symbol.id)
                     self.symbol = self.scanner.get_symbol()
                     if self.symbol.type == self.symbol.COMMA:
@@ -324,16 +344,20 @@ class Parser:
 
         if self.error_count == 0:
             for i in monitor_info:
-                monitor_error_type = self.monitors.make_monitor(i,None)
+                monitor_error_type = self.monitors.make_monitor(i, None)
                 if monitor_error_type != self.monitors.NO_ERROR:
                     self.display_error(monitor_error_type)
 
     def ignore_none(self):
-        while self.symbol.type == None:
-            self.symbol = self.scanner.get_symbol()
-
+        while True:
+            if self.symbol.type is None:
+                self.symbol = self.scanner.get_symbol()
+            else:
+                break
 
     def display_error(self, error_type):
         self.error_count += 1
-        print(self.scanner.lines[self.symbol.line_number]+ "" * self.symbol.position + "^" + self.error_dict[error_type])
-
+        error_position = self.scanner.lines[self.symbol.line_number]
+        error_content = self.error_dict[error_type]
+        symbol_pos = self.symbol.position
+        print(error_position + "" * symbol_pos + "^" + error_content)
