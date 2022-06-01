@@ -15,7 +15,6 @@ Parser - parses the definition file and builds the logic network.
 
 
 class Parser:
-
     """Parse the definition file and build the logic network.
 
     The parser deals with error handling. It analyses the syntactic and
@@ -66,8 +65,8 @@ class Parser:
 
         self.error_dict = {
             # Sytanx error
-            self.NO_SECTIONS : "Error: Expected a keyword. Expected keywords: DEVICES, CONNECTIONS and MONITORS",
-            self.NO_DEVICE_SECTION : "Error: Expected a device section",
+            self.NO_SECTIONS: "Error: Expected a section.",
+            self.NO_DEVICE_SECTION: "Error: Expected a device section",
             self.NO_CONNECTION_SECTION: "Error: Expected a connection section",
             self.NO_MONITOR_SECTION: "Error: Expected a monitor sectoin",
             self.NO_LINKING_VERB: "Error: Expected a linking verb",
@@ -152,6 +151,7 @@ class Parser:
         return True
 
     def parse_sections(self, KEYWORD):
+        """Parse each section, including the device, the connection and the monitor."""
         # check the CURLY_OPEN
         while True:
             self.symbol == self.scanner.get_symbol()
@@ -181,6 +181,7 @@ class Parser:
                 break
 
     def parse_device(self):
+        """Parse the device section."""
         # e.g A,B are OR with 2 inputs
         self.symbol = self.scanner.get_symbol()
         device_info = []
@@ -250,6 +251,7 @@ class Parser:
             self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_connecction(self):
+        """Parse the connection file."""
         # e.g FF.q connect G.g1
         self.symbol = self.scanner.get_symbol()
         # FF
@@ -323,6 +325,7 @@ class Parser:
             self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_monitor(self):
+        """Parse the monitor section."""
         monitor_info = []
         while self.symbol.type != self.scanner.CURLY_CLOSE:
             self.symbol = self.scanner.get_symbol()
@@ -349,6 +352,7 @@ class Parser:
                     self.display_error(monitor_error_type)
 
     def ignore_none(self):
+        """Ignore None output."""
         while True:
             if self.symbol.type is None:
                 self.symbol = self.scanner.get_symbol()
@@ -356,8 +360,9 @@ class Parser:
                 break
 
     def display_error(self, error_type):
+        """Display errors."""
         self.error_count += 1
         error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
-        print(error_position + "" * symbol_pos + "^" + error_content)
+        print(error_position, "" * symbol_pos + "^", error_content)

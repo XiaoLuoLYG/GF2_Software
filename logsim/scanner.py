@@ -1,6 +1,6 @@
 import sys
 from names import Names
-
+import os
 """Read the circuit definition file and translate the characters into symbols.
 
 Used in the Logic Simulator project to read the characters in the definition
@@ -68,7 +68,9 @@ class Scanner:
         else:
             self.read_as_string = False
             try:
-                self.input_file = open(path, 'r')   # input file
+                self.input_file = open(path, "r")   # input file
+                self.lines = self.input_file.readlines()
+                self.input_file.seek(0)
             except FileNotFoundError:
                 raise FileNotFoundError(
                     "Error: File doesn't exist in current directory")
