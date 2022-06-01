@@ -45,9 +45,10 @@ class Names:
 
     def unique_error_codes(self, num_error_codes):
         """Return a list of unique integer error codes."""
-        if not isinstance(num_error_codes, int):
+        if not isinstance(num_error_codes, int): #isinstance used to check the class of the object
             raise TypeError("Expected num_error_codes to be an integer.")
         self.error_code_count += num_error_codes
+
         return range(self.error_code_count - num_error_codes,
                      self.error_code_count)
 
@@ -61,29 +62,18 @@ class Names:
             print('Convert non-string input into string')
             name_string = str(name_string)
             #name error handling 
-            if not name_string.isalnum():
-                raise SyntaxError("name_string is not alphanumeric")
-            if name_string.isdigit():
-                raise SyntaxError("name_string is a digit, must be alphanumber string")
-            #Return name id or None
-            if name_string in self.names:
-                id = self.names.index(name_string)
-                return id
-            else:
-                return None
-            
+        if not name_string.isalnum():
+            raise SyntaxError("name_string is not alphanumeric")
+        elif name_string.isdigit():
+            raise SyntaxError("name_string is a digit, must be alphanumber string")
+        #Return name id or None
+        elif name_string in self.names:
+            id = self.names.index(name_string)
+            return id
         else:
-            #name error handling 
-            if not name_string.isalnum():
-                raise SyntaxError("name_string is not alphanumeric")
-            if name_string.isdigit():
-                raise SyntaxError("name_string is a digit, must be alphanumber string")
-            #Return name id or None
-            if name_string in self.names:
-                id = self.names.index(name_string)
-                return id
-            else:
-                return None
+            return None
+        
+
             
 
     def lookup(self, name_string_list):
