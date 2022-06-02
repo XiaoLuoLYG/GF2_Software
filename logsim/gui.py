@@ -11,6 +11,7 @@ import os
 import wx
 import wx.lib.scrolledpanel as scrolled
 import wx.glcanvas as wxcanvas
+import random
 from OpenGL import GL, GLUT
 
 from names import Names
@@ -75,6 +76,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.network = network
         self.monitors = monitors
         self.signals = []
+        self.colours = []
 
         # Bind events to the canvas
         self.Bind(wx.EVT_PAINT, self.on_paint)
@@ -84,6 +86,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def init_gl(self):
         """Configure and initialise the OpenGL context."""
         size = self.GetClientSize()
+        self.max_x = -size.width
         self.SetCurrent(self.context)
         GL.glDrawBuffer(GL.GL_BACK)
         GL.glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -99,6 +102,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
     def render(self, text):
         """Handle all drawing operations."""
         self.SetCurrent(self.context)
+        size = self.GetClientSize()
         if not self.init:
             # Configure the viewport, modelview and projection matrices
             self.init_gl()
@@ -112,18 +116,18 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         # Draw a sample signal trace
         
-        GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-        GL.glBegin(GL.GL_LINE_STRIP)
-        for i in range(10):
-            x = (i * 20) + 10
-            x_next = (i * 20) + 30
-            if i % 2 == 0:
-                y = 75
-            else:
-                y = 100
-            GL.glVertex2f(x, y)
-            GL.glVertex2f(x_next, y)
-        GL.glEnd()
+        #GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
+        #GL.glBegin(GL.GL_LINE_STRIP)
+        #for i in range(10):
+        #    x = (i * 20) + 10
+        #    x_next = (i * 20) + 30
+        #    if i % 2 == 0:
+        #        y = 75
+        #    else:
+        #        y = 100
+        #    GL.glVertex2f(x, y)
+        #    GL.glVertex2f(x_next, y)
+        #GL.glEnd()
         
         #Draw signal simulation
 
@@ -132,11 +136,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
             for i in range(0, len(self.signals[0][-1])):
                 GL.glColor3f(0, 0, 0)
                 self.render_text(str(i), 100 + i*self.scale_x,
-                                 self.size.height - 30)
+                                 size.height - 30)
                 GL.glColor3f(0.8, 0.8, 0.8)
                 GL.glLineWidth(1.0)
                 GL.glBegin(GL.GL_LINES)
-                GL.glVertex2f(100 + i*self.scale_x, self.size.height - 40)
+                GL.glVertex2f(100 + i*self.scale_x, size.height - 40)
                 GL.glVertex2f(100 + i*self.scale_x, 0)
                 GL.glEnd()
 
@@ -146,11 +150,11 @@ class MyGLCanvas(wxcanvas.GLCanvas):
                 GL.glColor3f(sig[1][0], sig[1][1], sig[1][2])
                 GL.glLineWidth(3.0)
                 self.draw_signal(
-                    sig[-1], (100, self.size.height - count*2*self.scale_y))
+                    sig[-1], (100, size.height - count*2*self.scale_y))
 
                 GL.glClearColor(1.0, 1.0, 1.0, 0.0)
                 self.render_text(
-                    sig[0], 50, self.size.height - count*2*self.scale_y)
+                    sig[0], 50, size.height - count*2*self.scale_y)
                 count += 1
 
         # We have been drawing to the back buffer, flush the graphics pipeline
@@ -259,6 +263,40 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
         GL.glEnd()
         return
+
+    #run simulation
+    def run(self, num):
+        size = self.GetClientSize()
+        
+        self.monitors.reset_monitors()
+        self.colours = []
+        for i in range(len(self.monitors.monitors_dictionary)):
+            self.colours.append(
+                (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
+
+        for _ in range(num):
+            if self.network.execute_network():
+                self.monitors.record_signals()
+            else:
+                print(("Error! Network oscillating."))
+
+        self.monitors.display_signals()
+        self.signals = []
+
+        count = 0
+        for (device_id, output_id), value in self.monitors.monitors_dictionary.items():
+
+            monitor_name = self.devices.get_signal_name(
+                device_id, output_id)
+            self.signals.append(
+                [monitor_name, self.colours[count], value])
+            count += 1
+
+        try:
+            self.render("")
+        except wx._core.wxAssertionError:
+            pass
+
 
 class scrolledpanel(scrolled.ScrolledPanel):
     """Configures the scrolled panel on the left to hold all switches"""
@@ -426,6 +464,7 @@ class Gui(wx.Frame):
 
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors, network)
+        self.canvas.run(10)
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, "Cycles:")
@@ -557,37 +596,3 @@ class Gui(wx.Frame):
         text = "".join(["New text box value: ", text_box_value])
         self.canvas.render(text)
 
-    #run simulation
-    def run(self, num, reset=False):
-        self.canvas = MyGLCanvas(self, parent.devices,
-                        parent.monitors, parent.network)
-        if reset:
-            self.parent.monitors.reset_monitors()
-            self.colours = []
-            for i in range(len(self.parent.monitors.monitors_dictionary)):
-                self.colours.append(
-                    (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
-
-        for _ in range(num):
-            if self.parent.network.execute_network():
-                self.parent.monitors.record_signals()
-            else:
-                print(_("Error! Network oscillating."))
-
-        self.canvas.signals = []
-        self.canvas3d.signals = []
-
-        count = 0
-        for (device_id, output_id), value in self.parent.monitors.monitors_dictionary.items():
-            monitor_name = self.parent.devices.get_signal_name(
-                device_id, output_id)
-            self.canvas.signals.append(
-                [monitor_name, self.colours[count], value])
-            self.canvas3d.signals.append(
-                [monitor_name, self.colours[count], value])
-            count += 1
-
-        try:
-            self.canvas.render()
-        except wx._core.wxAssertionError:
-            pass

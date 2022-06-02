@@ -52,6 +52,9 @@ def main(arg_list):
     #network = None
     #monitors = None
 
+    # ui = UserInterface(names,devices,network,monitors)
+    # print(ui.command_interface())
+
     for option, path in options:
         if option == "-h":  # print the usage message
             print(usage_message)

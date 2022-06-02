@@ -11,7 +11,6 @@ SW1 connect N1.I1;
 SW1 connect N1.I2;
 SW2 connect N2.I1;
 SW2 connect N2.I2;
-SW1 connect C.I1;
 N1 connect N3.I1;
 N2 connect N3.I2;
 N3 connect N4.I1;
@@ -20,7 +19,7 @@ N3 connect N4.I2;
 
 
 Monitor {
-N1,N4
+N1,N2,N3,N4;
 }
 
 
