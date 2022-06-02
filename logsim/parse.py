@@ -163,7 +163,7 @@ class Parser:
 
             else:
                 self.display_error(self.NO_CURLY_OPEN)
-
+                break
         # parse the section and check the CURLY_CLOSE
         while self.symbol.type != self.scanner.CURLY_CLOSE:
 
