@@ -38,25 +38,3 @@ G connect H.h2;
 Monitor {
 A, D, E, FF, G;
 }
-
-#Example 1
-Device  {
-N1, N2, N3, N4 are NAND with 2 inputs;
-SW1, SW2 are SWITCH initially with 0 input;
-CLK is CLOCK initially with 10 simulation cycles;
-}
-
-Connection  {
-SW1 connect N1.I1;
-CLK connect N1.I2;
-CLK connect N2.I3;
-SW2 connect N2.I4;
-N1 connect N3.I5;
-N4 connect N3.I6;
-N2 connect N4.I7;
-N3 connect N4.I8;
-}
-
-Monitor  {
-N1,N2;
-}

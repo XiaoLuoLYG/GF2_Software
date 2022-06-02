@@ -87,7 +87,7 @@ class Parser:
             network.OUTPUT_TO_OUTPUT: "Error: Both ports are outputs",
             network.INPUT_CONNECTED: "Error: Input is already in a connection",
             network.PORT_ABSENT: "Error: Second port is not a valid port",
-            network.DEVICE_ABSENT: "Error: NO such a device",
+            network.DEVICE_ABSENT: "Error: No such a device",
 
             devices.INVALID_QUALIFIER: "Error: Invalid qualifier",
             devices.NO_QUALIFIER: "Error: No qualifier",
@@ -171,7 +171,7 @@ class Parser:
                 self.parse_device()
 
             elif KEYWORD == 'CONNECTION':
-                self.parse_connecction()
+                self.parse_connection()
 
             elif KEYWORD == 'MONITOR':
                 self.parse_monitor()
@@ -266,80 +266,79 @@ class Parser:
             else:
                 self.display_error(self.INVALID_DEVICE_NAME)
 
-    def parse_connecction(self):
+    def parse_connection(self):
         """Parse the connection file."""
         # e.g FF.q connect G.g1
         self.symbol = self.scanner.get_symbol()
-        # FF
-        if self.symbol.type == self.scanner.NAME:
-            first_device = self.symbol.idß
-            # first_device = self.devices.get_device(int(self.symbol.id))
-            # print(first_device.device)
 
-            if first_device is None:
-                self.display_error(self.NO_DEVICE)
+        if self.symbol.type == self.scanner.CURLY_CLOSE:
+            pass
+        else:
+            # FF
+            if self.symbol.type == self.scanner.NAME:
+                first_device = self.devices.get_device(self.symbol.id)
 
-            if first_device.device_kind == self.devices.D_TYPE:
+                if first_device is None:
+                    self.display_error(self.NO_DEVICE)
+
+                elif first_device.device_kind == self.devices.D_TYPE:
+                    self.symbol = self.scanner.get_symbol()
+                    if self.symbol.type != self.scanner.DOT:
+                        self.display_error(self.NO_DOT)
+                    self.symbol = self.scanner.get_symbol()
+                    if self.symbol.id not in self.devices.dtype_output_ids:
+                        self.display_error(self.INVALID_PORT)
+                    
+                    first_device_port = None
+
+                else:
+                    first_device_port = None
+
+                #  CONNECT
                 self.symbol = self.scanner.get_symbol()
+                if self.symbol.id == self.scanner.CONNECT_ID:
+                    pass
+
+                else:
+                    self.display_error(self.NO_CONNECT_SYMBOL)
+
+                #  Device
+                self.symbol = self.scanner.get_symbol()
+                # second_device = self.devices.get_device(int(self.symbol.id))
+                second_device = self.devices.get_device(self.symbol.id)
+                print(second_device)
+                if second_device is None:
+                    self.display_error(self.NO_DEVICE)
+                    
                 # DOT
-                if self.symbol.type != self.sanner.DOT:
-                    self.display_error(self.NO_DOT)
-
-                # PORT
                 self.symbol = self.scanner.get_symbol()
-
-                if self.symbol.id not in self.devices.dtype_output_ids:
+                if self.symbol.type != self.scanner.DOT:
+                    self.display_error(self.NO_DOT)
+                # Port
+                self.symbol = self.scanner.get_symbol()
+                if self.symbol.type != self.scanner.NAME:
                     self.display_error(self.INVALID_PORT)
 
-                first_device_port_id = self.symbol.id
+                second_device_port = self.symbol.id
 
-            else:
-                first_device_port_id = None
+                self.symbol = self.scanner.get_symbol()
 
-            #  CONNECT
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.id == self.scanner.CONNECT_ID:
-                pass
-
-            else:
-                self.display_error(self.NO_CONNECT_SYMBOL)
-
-            #  Device
-            self.symbol = self.scanner.get_symbol()
-            # second_device = self.devices.get_device(int(self.symbol.id))
-            second_device = self.symbol.id
-            if second_device is None:
-                self.display_error(self.NO_DEVICE)
-                
-            # DOT
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.DOT:
-                self.display_error(self.NO_DOT)
-            # Port
-            self.symbol = self.scanner.get_symbol()
-            if self.symbol.type != self.scanner.NAME:
-                self.display_error(self.INVALID_DEVICE_NAME)
-
-            second_device_port_id = self.symbol.id
-
-            self.symbol = self.scanner.get_symbol()
-
-            if self.symbol.type != self.scanner.SEMICOLON:
-                self.display_error(self.NO_SEMICOLON)
+                if self.symbol.type != self.scanner.SEMICOLON:
+                    self.display_error(self.NO_SEMICOLON)
 
 
 
-            if self.error_count == 0:
-                error_type = self.network.make_connection(
-                    first_device.device_id,
-                    first_device_port_id,
-                    second_device.device_id,
-                    second_device_port_id)
-                if error_type != self.network.NO_ERROR:
-                    self.display_error(error_type)
+                if self.error_count == 0:
+                    error_type = self.network.make_connection(
+                        first_device.device_id,
+                        first_device_port,
+                        second_device.device_id,
+                        second_device_port)
+                    if error_type != self.network.NO_ERROR:
+                        self.display_error(error_type)
 
-        else:
-            self.display_error(self.INVALID_DEVICE_NAME)
+            # else:
+            #     self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_monitor(self):
         """Parse the monitor section."""
@@ -375,6 +374,7 @@ class Parser:
                 self.symbol = self.scanner.get_symbol()
             else:
                 break
+    
 
     def display_error(self, error_type):
         """Display errors."""
