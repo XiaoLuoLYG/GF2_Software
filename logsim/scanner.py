@@ -84,18 +84,19 @@ class Scanner:
                                  self.EOF, self.BULKCOMMENT] = range(11)
 
         # keyword that cannot be ignored
-        self.keywords_list = ["Device", "device", "with", "Connection",
+        self.keywords_list = ["Device", "device",  "Connection",
                               "Monitor", "is", "are", "input",
                               "simulation", "connect"]
 
-        [self.DEVICE_ID, self.DEVICE_LOWER_ID, self.WITH_ID,
+        [self.DEVICE_ID, self.DEVICE_LOWER_ID,
          self.CONNECTION_ID, self.MONITOR_ID, self.IS_ID, self.ARE_ID,
          self.INPUT_ID, self.SIMULATION_ID,
          self.CONNECT_ID] = self.names.lookup(self.keywords_list)
 
         # ignore
-        self.ignore = ["gate", "gates", "a", "an",
+        self.ignore = ["gate", "gates", "a", "an","with",
                        "some", "initially", "inputs", "connected", "cycles"]
+
         self.ending_symbols = [self.SEMICOLON, self.CURLY_CLOSE, self.EOF]
 
         # initialise
@@ -115,7 +116,7 @@ class Scanner:
             name_string_list = self.get_name()
             self.name_string = name_string_list[0]
             if self.name_string in self.ignore:
-                return None
+                symbol.type = None
             elif self.name_string in self.keywords_list:
                 symbol.type = self.KEYWORD
                 symbol.id = self.names.query(self.name_string)
