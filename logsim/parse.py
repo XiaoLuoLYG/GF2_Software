@@ -197,7 +197,7 @@ class Parser:
                     device_info.append(self.symbol.id)
                     self.symbol = self.scanner.get_symbol()
             #  is / are
-            if self.symbol.type == self.symbol.KEYWORD:
+            if self.symbol.type == self.scanner.KEYWORD:
                 if (self.symbol.id == self.scanner.IS_ID or
                         self.symbol.id == self.scanner.ARE_ID):
                     self.symbol = self.scanner.get_symbol()
