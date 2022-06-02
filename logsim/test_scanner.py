@@ -77,8 +77,8 @@ def test_get_name_and_num(new_scanner, new_names):
 
 
 @pytest.mark.parametrize("data, expected_output_type, expected_output_id", 
-                         [("Device",4, 0), ("NAND", 8, 9), ("device", 4, 1),
-                           ("A12J", 8, 9), (";", 1, None), ("12", 5, None)])
+                         [("Device",4, 0), ("NAND", 8, 8), ("device", 4, 1),
+                           ("A12J", 8, 8), (";", 1, None), ("12", 5, '12')])
 def test_get_symbol(new_names, data, expected_output_type, expected_output_id):
     """Test that names, numbers, symbols and keywords are all
     initialised and stored in the right sections"""
@@ -107,9 +107,10 @@ def test_get_symbol_ignore():
         val = test_scan.get_symbol()
         assert val.type is None
     after_num = len(empty_names.names)
-    assert before + 9 == after_num
+    assert before + 8 == after_num
     assert empty_names.names == ["Device", "device", "Connection", "Monitor", "is", "are", "input", 
-        "simulation", "connect"]
+         "connect"]
+         
 
 
 def test_wordcount(new_names):

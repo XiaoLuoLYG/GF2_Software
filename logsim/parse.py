@@ -137,16 +137,22 @@ class Parser:
                     self.parse_sections('MONITOR')
                     # check whether we have the connection section
                     if self.connection_section:
+                        # self.symbol = self.scanner.get_symbol()
+                        # print(self.symbol.type)
                         continue
                     else:
                         self.display_error(self.NO_CONNECTION_SECTION)
                         break
-
+                        
             else:
-                self.display_error(self.NO_SECTIONS)
+                if (not self.device_section or
+                     not self.connection_section or 
+                        not self.monitor_section):
+                    self.display_error(self.NO_SECTIONS)
+                
         # check whether we have the monitor section
-        if not self.monitor_section:
-            self.display_error(self.NO_MONITOR_SECTION)
+            if not self.monitor_section:
+                self.display_error(self.NO_MONITOR_SECTION)
 
         return True
 
@@ -270,7 +276,6 @@ class Parser:
         """Parse the connection file."""
         # e.g FF.q connect G.g1
         self.symbol = self.scanner.get_symbol()
-
         if self.symbol.type == self.scanner.CURLY_CLOSE:
             pass
         else:
@@ -306,7 +311,7 @@ class Parser:
                 self.symbol = self.scanner.get_symbol()
                 # second_device = self.devices.get_device(int(self.symbol.id))
                 second_device = self.devices.get_device(self.symbol.id)
-                print(second_device)
+                # print(second_device)
                 if second_device is None:
                     self.display_error(self.NO_DEVICE)
                     
@@ -342,30 +347,50 @@ class Parser:
 
     def parse_monitor(self):
         """Parse the monitor section."""
-        monitor_info = []
-        while self.symbol.type != self.scanner.CURLY_CLOSE:
+        self.symbol = self.scanner.get_symbol()      
+        if self.symbol.type == self.scanner.CURLY_CLOSE:
+            pass
+        else:
+            monitorPoint = self.signame(Monitor_mode=True)
+            if monitorPoint is None:
+                return
+            monitorList = [monitorPoint]
+            while self.symbol.type == self.scanner.COMMA:
+                self.symbol = self.scanner.get_symbol()
+                monitorPoint = self.signame(Monitor_mode=True)
+                if monitorPoint is None:
+                    return
+                monitorList.append(monitorPoint)
+            if self.symbol.type != self.scanner.SEMICOLON:
+                self.display_error(self.NO_SEMICOLON)
             self.symbol = self.scanner.get_symbol()
-            if self.symbol.type == self.scanner.NAME:
-                if (
-                    self.symbol.id in self.devices.gate_types or
-                        self.symbol.id in self.devices.device_types):
-                    monitor_info.append(self.symbol.id)
-                    self.symbol = self.scanner.get_symbol()
-                    if self.symbol.type == self.symbol.COMMA:
-                        self.symbol = self.scanner.get_symbol()
-                    else:
-                        self.display_error(self.NO_COMMA)
-                else:
-                    self.display_error(self.NO_DEVICE)
-                    break
-            else:
-                self.display_error(self.INVALID_DEVICE_NAME)
-
-        if self.error_count == 0:
-            for i in monitor_info:
-                monitor_error_type = self.monitors.make_monitor(i, None)
+            
+        
+            if self.error_count == 0:
+                monitor_error_type = self.monitors.make_monitor(monitorList,None)
                 if monitor_error_type != self.monitors.NO_ERROR:
                     self.display_error(monitor_error_type)
+        return True
+            # if self.symbol.type == self.scanner.NAME:
+            #     if (
+            #         self.symbol.id in self.devices.gate_types or
+            #             self.symbol.id in self.devices.device_types):
+            #         monitor_info.append(self.symbol.id)
+            #         self.symbol = self.scanner.get_symbol()
+            #         if self.symbol.type == self.symbol.COMMA:
+            #             self.symbol = self.scanner.get_symbol()
+            #         else:
+            #             self.display_error(self.NO_COMMA)
+            #     else:
+            #         self.display_error(self.NO_DEVICE)
+            # else:
+            #     self.display_error(self.INVALID_DEVICE_NAME)
+
+        # if self.error_count == 0:
+        #     for i in monitor_info:
+        #         monitor_error_type = self.monitors.make_monitor(i, None)
+        #         if monitor_error_type != self.monitors.NO_ERROR:
+        #             self.display_error(monitor_error_type)
 
     def ignore_none(self):
         """Ignore None output."""
@@ -375,11 +400,41 @@ class Parser:
             else:
                 break
     
+    def signame(self, Monitor_mode=False):
+        """Parse each individual signal name."""
+        if self.symbol.type == self.scanner.NAME:
+            device = self.symbol.id
+            self.symbol = self.scanner.get_symbol()
+            if self.symbol.type == self.scanner.DOT:
+                self.symbol = self.scanner.get_symbol()
+                if self.symbol.type == self.scanner.NAME:
+                    port = self.symbol.id
+                    self.symbol = self.scanner.get_symbol()
+                    if port in self.devices.dtype_output_ids:
+                        return (device, port)
+                    elif (
+                            port in self.devices.dtype_input_ids or
+                            self.names.get_name_string(port) in self.inputs
+                         ):
+                        if Monitor_mode:
+                            return (device, None)
+                        else:
+                            return (device, port)
+                    else:
+                        self.display_error(self.INVALID_PORT)
+                        return (device, None)
+                else:
+                    self.display_error(self.INVALID_DEVICE_NAME)
+                    return None
+            return (device, None)
+        else:
+            self.display_error(self.INVALID_DEVICE_NAME)
+            return None
 
     def display_error(self, error_type):
         """Display errors."""
         self.error_count += 1
-        # error_position = 1
+ 
         error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position

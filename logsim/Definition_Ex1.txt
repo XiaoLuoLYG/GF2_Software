@@ -1,0 +1,21 @@
+#Example 1
+Device  {
+N1, N2, N3, N4 are NAND with 2 inputs;
+SW1, SW2 are SWITCH initially with 0;
+CLK is CLOCK initially with 10 simulation cycles;
+}
+
+Connection  {
+SW1 connect N1.I1;
+CLK connect N1.I2;
+CLK connect N2.I1;
+SW2 connect N2.I2;
+N1 connect N3.I1;
+N4 connect N3.I2;
+N2 connect N4.I1;
+N3 connect N4.I2;
+}
+
+Monitor  {
+N1,N2;
+}
