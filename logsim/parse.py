@@ -154,7 +154,7 @@ class Parser:
         """Parse each section, including the device, the connection and the monitor."""
         # check the CURLY_OPEN
         while True:
-            self.symbol == self.scanner.get_symbol()
+            self.symbol = self.scanner.get_symbol()
             if self.symbol.type == self.scanner.CURLY_OPEN:
                 break
 
@@ -163,7 +163,7 @@ class Parser:
 
             else:
                 self.display_error(self.NO_CURLY_OPEN)
-
+                break
         # parse the section and check the CURLY_CLOSE
         while self.symbol.type != self.scanner.CURLY_CLOSE:
 
@@ -190,7 +190,7 @@ class Parser:
             self.symbol = self.scanner.get_symbol()
             while self.symbol.type == self.scanner.COMMA:
                 self.symbol = self.scanner.get_symbol()
-                if self.symbol.type != self.symbol.scanner.NAME:
+                if self.symbol.type != self.scanner.NAME:
                     self.display_error(self.INVALID_DEVICE_NAME)
                     break
                 else:
