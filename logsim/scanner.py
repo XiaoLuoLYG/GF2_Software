@@ -33,6 +33,7 @@ class Symbol:
         self.line_number = None
         self.position = None
 
+
 class Scanner:
 
     """Read circuit definition file and translate the characters into symbols.
@@ -86,16 +87,17 @@ class Scanner:
         # keyword that cannot be ignored
         self.keywords_list = ["Device", "device",  "Connection",
                               "Monitor", "is", "are", "input",
-                               "connect"]
+                              "connect"]
 
         [self.DEVICE_ID, self.DEVICE_LOWER_ID,
          self.CONNECTION_ID, self.MONITOR_ID, self.IS_ID, self.ARE_ID,
-         self.INPUT_ID, 
+         self.INPUT_ID,
          self.CONNECT_ID] = self.names.lookup(self.keywords_list)
 
         # ignore
-        self.ignore = ["gate", "gates", "a", "an","with",
-                       "some", "initially", "inputs", "connected", "cycles","simulation"]
+        self.ignore = ["gate", "gates", "a", "an", "with",
+                       "some", "initially", "inputs", "connected",
+                       "cycles", "simulation"]
 
         self.ending_symbols = [self.SEMICOLON, self.CURLY_CLOSE, self.EOF]
 

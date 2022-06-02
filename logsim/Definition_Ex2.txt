@@ -1,0 +1,40 @@
+#Example 2
+
+Device {
+A,B are OR with 2 inputs;
+C is NAND with 2 inputs;
+D,E are AND with 2 inputs;
+G is NOR with 2 inputs;
+H is XOR with 2 inputs;
+SW1, SW2 are SWITCH initially with 0;
+FF is DTYPE;
+CLK1 is CLOCK initially with 10 simulation cycles;
+CLK2 is CLOCK initially with 5 simulation cycles;
+}
+
+
+Connection  {
+SW1 connect A.I1;
+CLK1 connect A.I2;
+CLK1 connect B.I1;
+SW2 connect B.I2;
+SW1 connect C.I1;
+A connect C.I2;
+A connect D.I1;
+CLK1 connect D.I2;
+C connect E.I1;
+D connect E.I2;
+CLK2 connect FF.ffclock;
+B connect FF.ffdata;
+B connect FF.ffset;
+A connect FF.ffclear;
+FF.q connect G.I1;
+FF.qbar connect G.I2;
+E connect H.I1;
+G connect H.I2;
+}
+
+
+Monitor {
+A, D, E, FF, G;
+}

@@ -272,8 +272,8 @@ class Parser:
         self.symbol = self.scanner.get_symbol()
         # FF
         if self.symbol.type == self.scanner.NAME:
-            first_device = self.symbol.idß
-            # first_device = self.devices.get_device(int(self.symbol.id))
+            # first_device = self.symbol.id
+            first_device = self.devices.get_device(int(self.symbol.id))
             # print(first_device.device)
 
             if first_device is None:
