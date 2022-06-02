@@ -425,7 +425,7 @@ class Gui(wx.Frame):
         self.SetMenuBar(menuBar)
 
         # Canvas for drawing signals
-        self.canvas = MyGLCanvas(self, devices, monitors)
+        self.canvas = MyGLCanvas(self, devices, monitors, network)
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, "Cycles:")
