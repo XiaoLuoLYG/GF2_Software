@@ -180,7 +180,7 @@ class Parser:
                 self.display_error(self.NO_CURLY_CLOSE)
                 break
             
-        self.symbol = self.scanner.get_symbol()
+        # self.symbol = self.scanner.get_symbol()
 
     def parse_device(self):
         """Parse the device section."""
@@ -188,80 +188,83 @@ class Parser:
         # e.g. C is NAND with 2 inputs;
         # A
         self.symbol = self.scanner.get_symbol()
-        if self.symbol.type == self.scanner.NAME:
-            device_info = [self.symbol.id]
-            # ,
-            self.symbol = self.scanner.get_symbol()
-            while self.symbol.type == self.scanner.COMMA:
+        if self.symbol.type == self.scanner.CURLY_CLOSE:
+            pass
+        else:
+            if self.symbol.type == self.scanner.NAME:
+                device_info = [self.symbol.id]
+                # ,
                 self.symbol = self.scanner.get_symbol()
-                if self.symbol.type == self.scanner.NAME:
-                    device_info.append(self.symbol.id)
+                while self.symbol.type == self.scanner.COMMA:
                     self.symbol = self.scanner.get_symbol()
-                else:
-                    self.display_error(self.INVALID_DEVICE_NAME)
-                    return
-            #  is / are
-            if self.symbol.type == self.scanner.KEYWORD:
-                if (self.symbol.id == self.scanner.IS_ID or
-                        self.symbol.id == self.scanner.ARE_ID):
-                    self.symbol = self.scanner.get_symbol()
-                    #  OR... Devices
-                    
                     if self.symbol.type == self.scanner.NAME:
-                        if (self.symbol.id in self.devices.gate_types or
-                                self.symbol.id in self.devices.device_types):
-                            # device_kind = self.names.get_name_string(self.symbol.id)
-                            device_kind = self.symbol.id
-                            
-                            # ignore 'with'
-                            if device_kind == self.devices.D_TYPE:
-                                self.symbol =self.scanner.get_symbol()
-                                if self.symbol.type != self.scanner.SEMICOLON:
-                                        self.display_error(self.NO_SEMICOLON)
-                            else:
-
-                                self.symbol = self.scanner.get_symbol()
-                            
-                                self.ignore_none()
-
-                                # 2. Number
-                                if self.symbol.type == self.scanner.NUMBER:
-                                    # print(self.devices.gate_types)
-                                    # print(device_kind)
-                                    # print(self.symbol.id)
-                                    # print(self.devices.OR)
-
-                                    if self.error_count == 0:
-                                        for i in device_info:
-                                            device_er = self.devices.make_device(
-                                                i,
-                                                device_kind,
-                                                device_property=int(self.symbol.id))
-                                            if device_er != self.devices.NO_ERROR:
-                                                self.display_error(
-                                                    device_er)
-                                                break
-                                    # ignore 'input'
-                                    self.symbol = self.scanner.get_symbol()
-
-                                    self.ignore_none()
-
-                                    if self.symbol.type != self.scanner.SEMICOLON:
-                                        self.display_error(self.NO_SEMICOLON)
-
-                                else:
-                                    self.display_error(self.NO_NUM)
-
-                        else:
-                            self.display_error(self.NO_DEVICE)
-
+                        device_info.append(self.symbol.id)
+                        self.symbol = self.scanner.get_symbol()
                     else:
                         self.display_error(self.INVALID_DEVICE_NAME)
+                        return
+                #  is / are
+                if self.symbol.type == self.scanner.KEYWORD:
+                    if (self.symbol.id == self.scanner.IS_ID or
+                            self.symbol.id == self.scanner.ARE_ID):
+                        self.symbol = self.scanner.get_symbol()
+                        #  OR... Devices
+                        
+                        if self.symbol.type == self.scanner.NAME:
+                            if (self.symbol.id in self.devices.gate_types or
+                                    self.symbol.id in self.devices.device_types):
+                                # device_kind = self.names.get_name_string(self.symbol.id)
+                                device_kind = self.symbol.id
+                                
+                                # ignore 'with'
+                                if device_kind == self.devices.D_TYPE:
+                                    self.symbol =self.scanner.get_symbol()
+                                    if self.symbol.type != self.scanner.SEMICOLON:
+                                            self.display_error(self.NO_SEMICOLON)
+                                else:
 
-                else:
-                    self.display_error(self.NO_LINKING_VERB)
-        else:
-            self.display_error(self.INVALID_DEVICE_NAME)
+                                    self.symbol = self.scanner.get_symbol()
+                                
+                                    self.ignore_none()
+
+                                    # 2. Number
+                                    if self.symbol.type == self.scanner.NUMBER:
+                                        # print(self.devices.gate_types)
+                                        # print(device_kind)
+                                        # print(self.symbol.id)
+                                        # print(self.devices.OR)
+
+                                        if self.error_count == 0:
+                                            for i in device_info:
+                                                device_er = self.devices.make_device(
+                                                    i,
+                                                    device_kind,
+                                                    device_property=int(self.symbol.id))
+                                                if device_er != self.devices.NO_ERROR:
+                                                    self.display_error(
+                                                        device_er)
+                                                    break
+                                        # ignore 'input'
+                                        self.symbol = self.scanner.get_symbol()
+
+                                        self.ignore_none()
+
+                                        if self.symbol.type != self.scanner.SEMICOLON:
+                                            self.display_error(self.NO_SEMICOLON)
+
+                                    else:
+                                        self.display_error(self.NO_NUM)
+
+                            else:
+                                self.display_error(self.NO_DEVICE)
+
+                        else:
+                            self.display_error(self.INVALID_DEVICE_NAME)
+
+                    else:
+                        self.display_error(self.NO_LINKING_VERB)
+            else:
+                self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_connecction(self):
         """Parse the connection file."""
@@ -269,16 +272,14 @@ class Parser:
         self.symbol = self.scanner.get_symbol()
         # FF
         if self.symbol.type == self.scanner.NAME:
-            self.symbol = self.scanner.get_symbol()
-            first_device = self.devices.get_device(self.symbol.id)
-
-            # if first_device is None:
-            #     self.display_error(self.NO_DEVICE)
+            first_device = self.symbol.idß
+            # first_device = self.devices.get_device(int(self.symbol.id))
+            # print(first_device.device)
 
             if first_device is None:
                 self.display_error(self.NO_DEVICE)
 
-            elif first_device.device_kind == self.devices.D_TYPE:
+            if first_device.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 # DOT
                 if self.symbol.type != self.sanner.DOT:
@@ -298,20 +299,20 @@ class Parser:
             #  CONNECT
             self.symbol = self.scanner.get_symbol()
             if self.symbol.id == self.scanner.CONNECT_ID:
-                self.symbol = self.scanner.get_symbol()
+                pass
 
             else:
                 self.display_error(self.NO_CONNECT_SYMBOL)
 
             #  Device
             self.symbol = self.scanner.get_symbol()
-            second_device = self.devices.get_device(self.symbol.id)
-
-            # if second_device is None:
-            #     self.display_error(self.NO_DEVICE)
-
-            self.symbol = self.scanner.get_symbol()
+            # second_device = self.devices.get_device(int(self.symbol.id))
+            second_device = self.symbol.id
+            if second_device is None:
+                self.display_error(self.NO_DEVICE)
+                
             # DOT
+            self.symbol = self.scanner.get_symbol()
             if self.symbol.type != self.scanner.DOT:
                 self.display_error(self.NO_DOT)
             # Port
@@ -326,7 +327,7 @@ class Parser:
             if self.symbol.type != self.scanner.SEMICOLON:
                 self.display_error(self.NO_SEMICOLON)
 
-            self.symbol = self.scanner.get_symbol()
+
 
             if self.error_count == 0:
                 error_type = self.network.make_connection(
