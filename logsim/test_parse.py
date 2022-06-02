@@ -1,3 +1,4 @@
+from subprocess import _TXT
 from tkinter.tix import Tree
 from tracemalloc import start
 import pytest
@@ -20,8 +21,7 @@ def start_up(path):
 
 @pytest.fixture
 def parser():
-    return start_up()
-    
+    return start_up(../Definition_file.txt)
 @pytest.mark.parametrize("input, output",
                         [("Device{} Connection{} ", False),
                          ("Device{} Connection{} Monitor", True)
@@ -32,7 +32,7 @@ def parser():
 
 def test_parse_netwrok(input,output):
     indicate = False
-    parse = new_parse(input)
+    parse = start(input)
     parse.parse_network()
     if (new_parse.device_section == True and
             new_parse.connection_section == True and
