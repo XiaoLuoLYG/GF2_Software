@@ -24,19 +24,19 @@ A connect D.I1;
 CLK1 connect D.I2;
 C connect E.I1;
 D connect E.I2;
-CLK2 connect FF.ffclock;
-B connect FF.ffdata;
-B connect FF.ffset;
-A connect FF.ffclear;
-FF.q connect G.I1;
-FF.qbar connect G.I2;
+CLK2 connect FF.CLK;
+B connect FF.DATA;
+B connect FF.SET;
+A connect FF.CLEAR;
+FF.Q connect G.I1;
+FF.QBAR connect G.I2;
 E connect H.I1;
 G connect H.I2;
 }
 
 
 Monitor {
-A, D, E, FF, G;
+A, D, E, FF.Q, G;
 }
 
 

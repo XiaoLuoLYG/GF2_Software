@@ -108,8 +108,7 @@ class Network:
                 return device.outputs[output_id]
         return None
 
-    def make_connection(self, first_device_id, first_port_id, second_device_id,
-                        second_port_id):
+    def make_connection(self, first_device_id, first_port_id, second_device_id, second_port_id):
         """Connect the first device to the second device.
 
         Return self.NO_ERROR if successful, or the corresponding error if not.
