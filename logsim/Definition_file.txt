@@ -6,10 +6,10 @@ C is NAND with 2 inputs;
 D,E are AND with 2 inputs;
 G is NOR with 2 inputs;
 H is XOR with 2 inputs;
-SW1, SW2 are SWITCH initially with 0 input;
-FF is DTYPE with 4 inputs
+SW1, SW2 are SWITCH initially with 0;
+FF is DTYPE;
 CLK1 is CLOCK initially with 10 simulation cycles;
-CLK2 is CLOCK intially with 5 simulation cycles;
+CLK2 is CLOCK initially with 5 simulation cycles;
 }
 
 

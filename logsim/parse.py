@@ -70,7 +70,7 @@ class Parser:
             self.NO_CONNECTION_SECTION: "Error: Expected a connection section",
             self.NO_MONITOR_SECTION: "Error: Expected a monitor sectoin",
             self.NO_LINKING_VERB: "Error: Expected a linking verb",
-            self.NO_SEMICOLON: "Error: Expected a ':'",
+            self.NO_SEMICOLON: "Error: Expected a ';'",
             self.NO_COMMA: "Error: Expected a ','",
             self.NO_DOT: "Error: Expected a '.'",
             self.NO_CURLY_OPEN: "Error: Expected a '{'",
@@ -179,66 +179,78 @@ class Parser:
             elif self.symbol.type == self.scanner.EOF:
                 self.display_error(self.NO_CURLY_CLOSE)
                 break
+            
+        self.symbol = self.scanner.get_symbol()
 
     def parse_device(self):
         """Parse the device section."""
-        # e.g A,B are OR with 2 inputs
+        # e.g. A,B are OR with 2 inputs
+        # e.g. C is NAND with 2 inputs;
+        # A
         self.symbol = self.scanner.get_symbol()
-        device_info = []
         if self.symbol.type == self.scanner.NAME:
-            device_info.append(self.symbol.id)
+            device_info = [self.symbol.id]
+            # ,
             self.symbol = self.scanner.get_symbol()
             while self.symbol.type == self.scanner.COMMA:
                 self.symbol = self.scanner.get_symbol()
-                if self.symbol.type != self.scanner.NAME:
-                    self.display_error(self.INVALID_DEVICE_NAME)
-                    break
-                else:
+                if self.symbol.type == self.scanner.NAME:
                     device_info.append(self.symbol.id)
                     self.symbol = self.scanner.get_symbol()
+                else:
+                    self.display_error(self.INVALID_DEVICE_NAME)
+                    return
             #  is / are
             if self.symbol.type == self.scanner.KEYWORD:
                 if (self.symbol.id == self.scanner.IS_ID or
                         self.symbol.id == self.scanner.ARE_ID):
                     self.symbol = self.scanner.get_symbol()
                     #  OR... Devices
+                    
                     if self.symbol.type == self.scanner.NAME:
                         if (self.symbol.id in self.devices.gate_types or
                                 self.symbol.id in self.devices.device_types):
-                            device_type = self.symbol.id
-
-                            # ignore 'with'
+                            # device_kind = self.names.get_name_string(self.symbol.id)
+                            device_kind = self.symbol.id
                             
-                            self.symbol = self.scanner.get_symbol()
-                        
-                            self.ignore_none()
+                            # ignore 'with'
+                            if device_kind == self.devices.D_TYPE:
+                                self.symbol =self.scanner.get_symbol()
+                                if self.symbol.type != self.scanner.SEMICOLON:
+                                        self.display_error(self.NO_SEMICOLON)
+                            else:
 
-                            # 2. Number
-                            if self.symbol.type == self.scanner.NUMBER:
-                                if self.error_count == 0:
-                                    print(device_type)
-                                    for i in device_info:
-                                        device_er = self.devices.make_device(
-                                            i,
-                                            device_type,
-                                            self.symbol.id)
-                                        if device_er != self.devices.NO_ERROR:
-                                            self.display_error(
-                                                device_er)
-                                            break
-                                # ignore 'input'
                                 self.symbol = self.scanner.get_symbol()
-
+                            
                                 self.ignore_none()
 
-                                if self.symbol.type == self.scanner.SEMICOLON:
+                                # 2. Number
+                                if self.symbol.type == self.scanner.NUMBER:
+                                    # print(self.devices.gate_types)
+                                    # print(device_kind)
+                                    # print(self.symbol.id)
+                                    # print(self.devices.OR)
+
+                                    if self.error_count == 0:
+                                        for i in device_info:
+                                            device_er = self.devices.make_device(
+                                                i,
+                                                device_kind,
+                                                device_property=int(self.symbol.id))
+                                            if device_er != self.devices.NO_ERROR:
+                                                self.display_error(
+                                                    device_er)
+                                                break
+                                    # ignore 'input'
                                     self.symbol = self.scanner.get_symbol()
 
-                                else:
-                                    self.display_error(self.NO_SEMICOLON)
+                                    self.ignore_none()
 
-                            else:
-                                self.display_error(self.NO_NUM)
+                                    if self.symbol.type != self.scanner.SEMICOLON:
+                                        self.display_error(self.NO_SEMICOLON)
+
+                                else:
+                                    self.display_error(self.NO_NUM)
 
                         else:
                             self.display_error(self.NO_DEVICE)
@@ -370,4 +382,4 @@ class Parser:
         error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
-        print(error_position, "" * symbol_pos + "^", error_content)
+        print(error_position,"" * symbol_pos + "^", error_content)

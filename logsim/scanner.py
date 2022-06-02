@@ -86,16 +86,16 @@ class Scanner:
         # keyword that cannot be ignored
         self.keywords_list = ["Device", "device",  "Connection",
                               "Monitor", "is", "are", "input",
-                              "simulation", "connect"]
+                               "connect"]
 
         [self.DEVICE_ID, self.DEVICE_LOWER_ID,
          self.CONNECTION_ID, self.MONITOR_ID, self.IS_ID, self.ARE_ID,
-         self.INPUT_ID, self.SIMULATION_ID,
+         self.INPUT_ID, 
          self.CONNECT_ID] = self.names.lookup(self.keywords_list)
 
         # ignore
         self.ignore = ["gate", "gates", "a", "an","with",
-                       "some", "initially", "inputs", "connected", "cycles"]
+                       "some", "initially", "inputs", "connected", "cycles","simulation"]
 
         self.ending_symbols = [self.SEMICOLON, self.CURLY_CLOSE, self.EOF]
 
@@ -135,7 +135,7 @@ class Scanner:
 
         elif self.current_character == ",":
             symbol.type = self.COMMA
-            print(".", end=' ')
+            print(",", end=' ')
             self.advance()
 
         elif self.current_character == "{":

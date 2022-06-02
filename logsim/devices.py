@@ -310,7 +310,7 @@ class Devices:
         elif device_kind in self.gate_types:
             # Device property is the number of inputs
             if device_kind == self.XOR:
-                if device_property is not None:
+                if device_property is not None and device_property != 2:
                     error_type = self.QUALIFIER_PRESENT
                 else:
                     self.make_gate(device_id, device_kind, 2)
