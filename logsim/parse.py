@@ -68,7 +68,7 @@ class Parser:
             self.NO_SECTIONS: "Error: Expected a section.",
             self.NO_DEVICE_SECTION: "Error: Expected a device section",
             self.NO_CONNECTION_SECTION: "Error: Expected a connection section",
-            self.NO_MONITOR_SECTION: "Error: Expected a monitor sectoin",
+            self.NO_MONITOR_SECTION: "Error: Expected a monitor section",
             self.NO_LINKING_VERB: "Error: Expected a linking verb",
             self.NO_SEMICOLON: "Error: Expected a ';'",
             self.NO_COMMA: "Error: Expected a ','",
@@ -151,8 +151,8 @@ class Parser:
                     self.display_error(self.NO_SECTIONS)
                 
         # check whether we have the monitor section
-            if not self.monitor_section:
-                self.display_error(self.NO_MONITOR_SECTION)
+            # if not self.monitor_section:
+            #     self.display_error(self.NO_MONITOR_SECTION)
 
         return True
 
@@ -193,7 +193,9 @@ class Parser:
         # e.g. A,B are OR with 2 inputs
         # e.g. C is NAND with 2 inputs;
         # A
+        # print(self.symbol.type)
         self.symbol = self.scanner.get_symbol()
+
         if self.symbol.type == self.scanner.CURLY_CLOSE:
             pass
         else:
@@ -251,13 +253,15 @@ class Parser:
                                                         device_er)
                                                     break
                                         # ignore 'input'
+                                        
                                         self.symbol = self.scanner.get_symbol()
 
+                                        # print(self.symbol.type)
                                         self.ignore_none()
-
+                                        # print(self.symbol.type)
                                         if self.symbol.type != self.scanner.SEMICOLON:
                                             self.display_error(self.NO_SEMICOLON)
-
+                                        # print(self.symbol.type)
                                     else:
                                         self.display_error(self.NO_NUM)
 
@@ -271,6 +275,7 @@ class Parser:
                         self.display_error(self.NO_LINKING_VERB)
             else:
                 self.display_error(self.INVALID_DEVICE_NAME)
+                # pass
 
     def parse_connection(self):
         """Parse the connection file."""
@@ -342,12 +347,14 @@ class Parser:
                     if error_type != self.network.NO_ERROR:
                         self.display_error(error_type)
 
-            # else:
-            #     self.display_error(self.INVALID_DEVICE_NAME)
+            else:
+                self.display_error(self.INVALID_DEVICE_NAME)
 
     def parse_monitor(self):
         """Parse the monitor section."""
-        self.symbol = self.scanner.get_symbol()      
+        
+        self.symbol = self.scanner.get_symbol()   
+        # print(self.symbol.type)
         if self.symbol.type == self.scanner.CURLY_CLOSE:
             pass
         else:
@@ -357,19 +364,23 @@ class Parser:
             monitorList = [monitorPoint]
             while self.symbol.type == self.scanner.COMMA:
                 self.symbol = self.scanner.get_symbol()
+                # print(self.symbol.type)
                 monitorPoint = self.signame(Monitor_mode=True)
+                
                 if monitorPoint is None:
                     return
                 monitorList.append(monitorPoint)
             if self.symbol.type != self.scanner.SEMICOLON:
                 self.display_error(self.NO_SEMICOLON)
-            self.symbol = self.scanner.get_symbol()
+
+            # self.symbol = self.scanner.get_symbol()
             
         
             if self.error_count == 0:
-                monitor_error_type = self.monitors.make_monitor(monitorList,None)
-                if monitor_error_type != self.monitors.NO_ERROR:
-                    self.display_error(monitor_error_type)
+                for i in monitorList:
+                    monitor_error_type = self.monitors.make_monitor( i[0],i[1])
+                    if monitor_error_type != self.monitors.NO_ERROR:
+                        self.display_error(monitor_error_type)
         return True
             # if self.symbol.type == self.scanner.NAME:
             #     if (
@@ -435,7 +446,7 @@ class Parser:
         """Display errors."""
         self.error_count += 1
  
-        error_position = self.scanner.lines[self.symbol.line_number]
+        # error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
-        print(error_position,"" * symbol_pos + "^", error_content)
+        print("" * symbol_pos + "^", error_content)
