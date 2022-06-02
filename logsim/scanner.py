@@ -128,10 +128,10 @@ class Scanner:
             print(self.name_string, end=' ')
 
         elif self.current_character.isdigit():  # number
-            number_get = self.get_number()[0]
+            symbol.id = self.get_number()[0]
             # [symbol.id] = self.names.lookup([number_get])
             symbol.type = self.NUMBER
-            print(number_get, end=' ')
+            print(symbol.id, end=' ')
 
         elif self.current_character == ",":
             symbol.type = self.COMMA

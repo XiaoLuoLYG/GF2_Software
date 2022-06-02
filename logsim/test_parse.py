@@ -26,7 +26,7 @@ def parser():
                         [("Device{} Connection{} ", False),
                          ("Device{} Connection{} Monitor", True)
                         
-                        ]w
+                        ]
     
 )
 

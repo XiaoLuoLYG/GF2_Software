@@ -204,23 +204,24 @@ class Parser:
                     #  OR... Devices
                     if self.symbol.type == self.scanner.NAME:
                         if (self.symbol.id in self.devices.gate_types or
-                                self.symbol.id in self.devices.devcie_types):
+                                self.symbol.id in self.devices.device_types):
                             device_type = self.symbol.id
 
                             # ignore 'with'
+                            
                             self.symbol = self.scanner.get_symbol()
+                        
                             self.ignore_none()
 
                             # 2. Number
                             if self.symbol.type == self.scanner.NUMBER:
-
                                 if self.error_count == 0:
-                                    device_property = self.symbol.id
+                                    print(device_type)
                                     for i in device_info:
                                         device_er = self.devices.make_device(
                                             i,
                                             device_type,
-                                            device_property)
+                                            self.symbol.id)
                                         if device_er != self.devices.NO_ERROR:
                                             self.display_error(
                                                 device_er)
@@ -262,7 +263,10 @@ class Parser:
             # if first_device is None:
             #     self.display_error(self.NO_DEVICE)
 
-            if first_device.device_kind == self.devices.D_TYPE:
+            if first_device is None:
+                self.display_error(self.NO_DEVICE)
+
+            elif first_device.device_kind == self.devices.D_TYPE:
                 self.symbol = self.scanner.get_symbol()
                 # DOT
                 if self.symbol.type != self.sanner.DOT:
@@ -343,7 +347,7 @@ class Parser:
                     self.display_error(self.NO_DEVICE)
                     break
             else:
-                self.dissplay_error(self.INVALID_DEVICE_NAME)
+                self.display_error(self.INVALID_DEVICE_NAME)
 
         if self.error_count == 0:
             for i in monitor_info:
@@ -362,6 +366,7 @@ class Parser:
     def display_error(self, error_type):
         """Display errors."""
         self.error_count += 1
+        # error_position = 1
         error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
