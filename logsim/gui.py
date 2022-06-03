@@ -999,13 +999,13 @@ class Gui(wx.Frame):
         command = self.read_command()  # read the first character
         if command == "r":
             self.run_command()
-            self.text_box_command.SetValue("")
+            
         elif command == "c":
             self.continue_command()
-            self.text_box_command.SetValue("")
+            
         else:
             print("Invalid command. Enter 'h' for help.")
-            self.text_box_command.SetValue("")
+            
 
         del self.line
 
@@ -1019,6 +1019,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
         order = "c"+""+str(self.on_spin(event))
         self.command_interface_order(event, order)
+        
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
@@ -1026,6 +1027,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
         order = "r"+""+str(self.on_spin(event))
         self.command_interface_order(event, order)
+        self.canvas.run(int(str(self.on_spin(event))))
 
     def on_text_box_command(self, event):
         "Handle the event when the user enters text."
@@ -1298,3 +1300,5 @@ class Gui(wx.Frame):
                 self.cycles_completed += cycles
                 print(" ".join(["Continuing for", str(cycles), "cycles.",
                                 "Total:", str(self.cycles_completed)]))
+                self.canvas.run(int(str(self.cycles_completed)))
+        return(str(self.cycles_completed))
