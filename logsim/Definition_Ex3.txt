@@ -36,7 +36,7 @@ G connect H.I2;
 
 
 Monitor {
-A, D, E, FF.Q, G;
+A, B, C, D, E, FF.Q, FF.QBAR, G ,H;
 }
 
 
