@@ -17,7 +17,7 @@ Connection  {
 SW1 connect A.I1;
 CLK1 connect A.I2;
 CLK1 connect B.I1;
-SW2 connect B.I2;
+SW2 connect B.I1;
 SW1 connect C.I1;
 A connect C.I2;
 A connect D.I1;

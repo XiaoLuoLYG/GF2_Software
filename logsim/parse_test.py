@@ -198,7 +198,7 @@ class Parser:
             elif self.symbol.type == self.scanner.EOF:
                 self.display_error(self.NO_CURLY_CLOSE)
                 break
-            
+
         # self.symbol = self.scanner.get_symbol()
 
     def parse_device(self):
@@ -233,10 +233,10 @@ class Parser:
                             self.symbol.id == self.scanner.ARE_ID):
                         self.symbol = self.scanner.get_symbol()
                         #  OR... Devices
-                        
                         if self.symbol.type == self.scanner.NAME:
-                            if (self.symbol.id in self.devices.gate_types or
-                                    self.symbol.id in self.devices.device_types):
+                            if (self.symbol.id in self.devices.gate_types 
+                                    or 
+                                        self.symbol.id in self.devices.device_types):
                                 # device_kind = self.names.get_name_string(self.symbol.id)
                                 device_kind = self.symbol.id
                                 # for i in device_info:
