@@ -162,10 +162,10 @@ class Parser:
             # if not self.monitor_section:
             #     self.display_error(self.NO_MONITOR_SECTION)
         print(f'\n total number of errors: {self.error_count}')
-        # print(self.na)
-        # print(self.devices.D_TYPE)
-        # print(self.devices.devices_list)
-        return True
+
+        if self.error_count == 0:
+
+            return True
 
     def parse_sections(self, KEYWORD):
         """Parse each section."""
