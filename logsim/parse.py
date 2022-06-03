@@ -67,7 +67,7 @@ class Parser:
 
         self.error_dict = {
             # Sytanx error
-            self.NO_SECTIONS: "Error: Expected a section before going further.",
+            self.NO_SECTIONS: "Error: Expected sections for further analysis",
             self.NO_DEVICE_SECTION: "Error: Expected a device section",
             self.NO_CONNECTION_SECTION: "Error: Expected a connection section",
             self.NO_MONITOR_SECTION: "Error: Expected a monitor section",
@@ -173,7 +173,7 @@ class Parser:
         self.symbol = self.scanner.get_symbol()
 
         while self.symbol.type is None:
-            self.symbol =self.scanner.get_symbol()
+            self.symbol = self.scanner.get_symbol()
         if self.symbol.type == self.scanner.CURLY_OPEN:
             self.symbol = self.scanner.get_symbol()
         else:
@@ -217,20 +217,17 @@ class Parser:
                 else:
                     self.display_error(self.INVALID_DEVICE_NAME)
                     break
-        
+
             # pass
             #  is / are
             if (self.symbol.id == self.scanner.IS_ID or
                     self.symbol.id == self.scanner.ARE_ID):
                 self.symbol = self.scanner.get_symbol()
                 #  OR... Devices
-            
 
                 if self.symbol.type == self.scanner.NAME:
-                    gate_type = (self.symbol.id in
-                                    self.devices.gate_types)
-                    device_type = (self.symbol.id in
-                                    self.devices.device_types)
+                    gate_type = (self.symbol.id in self.devices.gate_types)
+                    device_type = (self.symbol.id in self.devices.device_types)
                     if gate_type or device_type:
                         device_kind = self.symbol.id
 
@@ -244,8 +241,9 @@ class Parser:
                                             i,
                                             device_kind,
                                             device_property=None))
-                                    if (device_er !=self.devices.NO_ERROR):
-                                        self.display_error(device_er,skip=False)
+                                    if (device_er != self.devices.NO_ERROR):
+                                        self.display_error(
+                                            device_er, skip=False)
                                         break
                             self.symbol = self.scanner.get_symbol()
                             type = self.symbol.type
@@ -410,7 +408,6 @@ class Parser:
 
     def parse_monitor(self):
         """Parse the monitor section."""
-
         # print(self.symbol.type)
         if self.symbol.type == self.scanner.CURLY_CLOSE:
             pass
