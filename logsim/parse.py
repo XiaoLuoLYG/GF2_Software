@@ -275,7 +275,7 @@ class Parser:
                                                             )
                                         if er != self.devices.NO_ERROR:
                                             self.display_error(
-                                                device_er, skip=False)
+                                                er, skip=False)
                                             break
                                 # ignore 'input'
 

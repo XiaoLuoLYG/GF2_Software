@@ -1,0 +1,206 @@
+commit 657456ad70ebd3f84e7c06d80ef2c4d432c10c9c (HEAD -> main)
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 10:04:39 2022 +0100
+
+    last commit
+
+commit ebdf850dfc0bedf89e282f9d3b64b7ff538b7e19 (SF2/main)
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 09:57:00 2022 +0100
+
+    m
+
+commit 99b50cb4b45b593b717e8a78d19eedd76aebd3c0
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 09:42:30 2022 +0100
+
+    add py_parse
+
+commit fefc2d7d4163f0b8304b3c1f6dd25e7080c17bad
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 09:39:10 2022 +0100
+
+    final commit
+
+commit cf150a8c8c037874101be1613b98ba1af905e5e8
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 09:36:54 2022 +0100
+
+    🛰
+
+commit 0656daa0b400d65e95a362b4f2d84f7163922f26
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 08:52:01 2022 +0100
+
+    .
+
+commit 88e5b26d1c29ca8bb852c4f6635df6bbb81e998e
+Merge: 410d718 cb277c3
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 04:01:42 2022 +0100
+
+    ZZ`ZZ
+    
+    Merge branch 'main' of https://github.com/XiaoLuoLYG/GF2_Software
+
+commit 410d718adc11b848897f78ee80117ff6f4b8d0cc
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 04:00:43 2022 +0100
+
+    .
+
+commit 43023210d2d02357c1b3c1b01845540ab624dd6a
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 01:10:22 2022 +0100
+
+    🚀
+
+commit b2c7d00d4245af8c87e857e3701b1233220f2506
+Merge: cb28dd6 3d777c5
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 00:30:30 2022 +0100
+
+    🚀
+
+commit cb28dd6a6d0a5d9727f02f578c4a004930fdbca6
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Fri Jun 3 00:29:35 2022 +0100
+
+    🚀
+
+commit f208a92c4da156286c3eb23a1575a6bd978e27fd
+Merge: 1062179 8d8c66f
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 18:46:47 2022 +0100
+
+    Merge branch 'main' of https://github.com/XiaoLuoLYG/GF2_Software
+
+commit 106217974cef0e1a6aa9659593a86abbbb9d601c
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 18:46:40 2022 +0100
+
+    📍
+
+commit 04d427c299b10aee6b8a990236f1de9019615c2c
+Merge: 92a6748 2389f1d
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 18:02:10 2022 +0100
+
+    📍
+
+commit 92a6748a1970ec4bc4501c6bf5e246c8e8959343
+Merge: c492bb5 8026c45
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 18:01:25 2022 +0100
+
+    📍
+
+commit c492bb5ab5e650d2ece4938d91e88c95232d8de1
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 16:46:16 2022 +0100
+
+    .
+
+commit e3ca7253ca4f902b9e39ddc0a74a80de5be87f6e
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 14:50:46 2022 +0100
+
+    .
+
+commit 705af17ded6eb1d278427594b6eae102031170db
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 10:56:24 2022 +0100
+
+    📍
+
+commit d252f718b0bf70b910b9f48e5e2bf48749b82e16
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 08:36:40 2022 +0100
+
+    📍
+
+commit 8020a17ad5774e9eb9aa1a9c996502dcb646e1c7
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 01:43:32 2022 +0100
+
+    📍
+
+commit 8e85c57e5b6e8687cfc448fd40b03e564328bd5d
+Merge: 32b31f3 e64b018
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 01:30:38 2022 +0100
+
+    Merge branch 'main' of https://github.com/XiaoLuoLYG/GF2_Software
+
+commit 32b31f385392a2f359246d53e8b6381bf7aad5ee
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 01:30:25 2022 +0100
+
+    .
+
+commit e3ad929a319399a6113317deef7e78b1da4313c7
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 01:04:24 2022 +0100
+
+    📍
+
+commit 4022532e8d7b340c6634f016337335cb4a50d165
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 01:01:15 2022 +0100
+
+    📍
+
+commit c22b352ebcaeedb27d620a745fab87301fba43ea
+Merge: 20ebcda af03eff
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 00:56:19 2022 +0100
+
+    .
+
+commit 20ebcda800bb33d2d02b3a1ac58f41b13895d709
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 00:51:00 2022 +0100
+
+    📍
+
+commit 3483b1304dcecd73287b2ebb44384482b90dc76b
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Thu Jun 2 00:47:57 2022 +0100
+
+    📍
+
+commit 77922bd8916061f0c595d3562bfa337e6acc36db
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Wed Jun 1 23:30:26 2022 +0100
+
+    📍
+
+commit 817a6dd80b02ca1ac1999e0a57dfca5b639103e1
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Wed Jun 1 19:42:49 2022 +0100
+
+    😄
+
+commit 6f0b515a392861c48ad3f0608807d95923db555e
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Wed Jun 1 19:26:05 2022 +0100
+
+    Parse
+
+commit f1b4528094f46cee8aa76aaabb5b0f49df6a0a6c
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Sun May 22 01:58:39 2022 +0100
+
+    EBNF
+
+commit 56d6e4e774601dbc9b7df66ef19f60afb39d4ddf
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Sat May 21 17:32:06 2022 +0100
+
+    Delete
+
+commit da23862d945f54f1d0fc2b1cf51cb948a767f693
+Author: Harrison Zheng <zhengjingyaoharrison@gmail.com>
+Date:   Sat May 21 17:15:17 2022 +0100
+
+    Add EBNF
