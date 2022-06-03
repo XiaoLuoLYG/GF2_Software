@@ -1,5 +1,6 @@
 """Test the parse module"""
 
+from tracemalloc import start
 import pytest
 
 from names import Names
@@ -59,6 +60,13 @@ def test_parse_network_part(file,expected_output):
     output = parse.device_section and parse.connection_section and parse.monitor_section
     assert output == expected_output
     
-@pytest.mark.parametrize("input, error_count",
-                         [("Device{A,B are with 2 inputs;} Connection{}", 0),
+@pytest.mark.parametrize("file, error_count",
+                         [("Definition_EX1.txt", 0),
+                            ("Definition_Ex2.txt", 0),
+                                ("Definition_Ex3.txt", 2)
                           ])
+
+def test_error_count(file,error_count):
+    parse = start_up(file)
+    parse.parse_network()
+    assert parse.error_count == error_count
