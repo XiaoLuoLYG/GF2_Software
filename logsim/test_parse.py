@@ -1,3 +1,5 @@
+"""Test the parse module"""
+
 import pytest
 
 from names import Names
@@ -39,32 +41,24 @@ def test_parse_network(file, expected_output):
     parse = start_up(file)
     assert parse.parse_network() == expected_output
 
-@pytest.mark.parametrize(
-    "Keyword, expected_function",
-    [
-        (
-            "DEVICE",
-            True,
-        ),
-        (
-            "Definition_Ex2.txt",
-            True,
-        ),
-    ],
-)
 
-def test_parse_section(K)
+
 
 
 @pytest.mark.parametrize(
     "file, expected_output",
     [
-        (
-            "test_none.txt",
-            True,
-        ),
+        ( "Definition_Ex1.txt", True, ),
+        ( "Definition_Ex4.txt", False, ),
     ],
 )
-def test_ignore_none(file, expected_output):
+
+def test_parse_network_part(file,expected_output):
     parse = start_up(file)
-    assert parse.ignore_none() == expected_output
+    parse.parse_network()
+    output = parse.device_section and parse.connection_section and parse.monitor_section
+    assert output == expected_output
+    
+@pytest.mark.parametrize("input, error_count",
+                         [("Device{A,B are with 2 inputs;} Connection{}", 0),
+                          ])
