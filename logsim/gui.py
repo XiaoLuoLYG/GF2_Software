@@ -300,85 +300,18 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 
 class scrolledpanel(scrolled.ScrolledPanel):
     """Configures the scrolled panel on the left to hold all switches"""
-    def __init__(self,parent):
+    def __init__(self,parent,names, devices, network, monitors):
         scrolled.ScrolledPanel.__init__(self,parent,size=(200,170))
 
-        self.label1 = wx.StaticText(self, label = "Switch 1")
-        self.label2 = wx.StaticText(self, label = "Switch 2")
-        self.label3 = wx.StaticText(self, label = "Switch 3")
-        self.label4 = wx.StaticText(self, label = "Switch 4")
-        self.label5 = wx.StaticText(self, label = "Switch 5")
-        self.label6 = wx.StaticText(self, label = "Switch 6")
-        self.label7 = wx.StaticText(self, label = "Switch 7")
+        self.names = names
+        self.devices = devices
+        self.monitors = monitors
+        self.network = network
 
-        self.button1 = wx.ToggleButton(self,label = "On 1")
-        self.button2 = wx.ToggleButton(self,label = "On 1")
-        self.button3 = wx.ToggleButton(self,label = "On 1")
-        self.button4 = wx.ToggleButton(self,label = "On 1")
-        self.button5 = wx.ToggleButton(self,label = "On 1")
-        self.button6 = wx.ToggleButton(self,label = "On 1")
-        self.button7 = wx.ToggleButton(self,label = "On 1")
+        self.monitors.get_signal_names()
 
-        self.button1.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button2.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button3.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button4.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button5.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button6.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-        self.button7.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
+        listofmonitors = self.monitors.get_signal_names()[1]
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        firstsizer = wx.BoxSizer(wx.HORIZONTAL)
-        secondsizer = wx.BoxSizer(wx.HORIZONTAL)
-        thirdsizer = wx.BoxSizer(wx.HORIZONTAL)
-        fourthsizer = wx.BoxSizer(wx.HORIZONTAL)
-        fifthsizer = wx.BoxSizer(wx.HORIZONTAL)
-        sixthsizer = wx.BoxSizer(wx.HORIZONTAL)
-        seventhsizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        sizer.Add(firstsizer,0, wx.ALL, 5)
-        sizer.Add(secondsizer,0, wx.ALL, 5)
-        sizer.Add(thirdsizer,0, wx.ALL, 5)
-        sizer.Add(fourthsizer,0, wx.ALL, 5)
-        sizer.Add(fifthsizer,0, wx.ALL, 5)
-        sizer.Add(sixthsizer,0, wx.ALL, 5)
-        sizer.Add(seventhsizer,0, wx.ALL, 5)
-
-        firstsizer.Add(self.label1, 1, wx.TOP, 10)
-        firstsizer.Add(self.button1, 1, wx.TOP, 10)
-        secondsizer.Add(self.label2, 1, wx.TOP, 10)
-        secondsizer.Add(self.button2, 1, wx.TOP, 10)
-        thirdsizer.Add(self.label3, 1, wx.TOP, 10)
-        thirdsizer.Add(self.button3, 1, wx.TOP, 10)
-        fourthsizer.Add(self.label4, 1, wx.TOP, 10)
-        fourthsizer.Add(self.button4, 1, wx.TOP, 10)
-        fifthsizer.Add(self.label5, 1, wx.TOP, 10)
-        fifthsizer.Add(self.button5, 1, wx.TOP, 10)
-        sixthsizer.Add(self.label6, 1, wx.TOP, 10)
-        sixthsizer.Add(self.button6, 1, wx.TOP, 10)
-        seventhsizer.Add(self.label7, 1, wx.TOP, 10)
-        seventhsizer.Add(self.button7, 1, wx.TOP, 10)
-
-        self.SetSizer(sizer)
-        self.SetupScrolling()
-
-    def onToggleClick(self, event):
-        state = event.GetEventObject().GetValue()
-
-        if state == True:
-            #self.Label.SetLabel("Off")
-            event.GetEventObject().SetLabel("Off 0")
-
-        else:
-            #self.label.SetLabelText("On")
-            event.GetEventObject().SetLabel("On 1")
-
-class scrolledpanel2(scrolled.ScrolledPanel):
-    """Configures the scrolled panel on the left to hold all switches"""
-    def __init__(self,parent):
-        scrolled.ScrolledPanel.__init__(self,parent,size=(200,170))
-        listofmonitors = ["A","B","C","D","E"]
-        
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         for n in range(len(listofmonitors)):
@@ -388,40 +321,529 @@ class scrolledpanel2(scrolled.ScrolledPanel):
             a = wx.BoxSizer(wx.HORIZONTAL)
             sizer.Add(a,0, wx.ALL, 5)
             self.c = wx.StaticText(self, label = listofmonitors[n])
-            self.a = wx.Button(self, wx.ID_ANY, label=b)
+            self.a = wx.ToggleButton(self,label = listofmonitors[n])
+            self.a.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
             a.Add(self.c,1, wx.TOP, 10)
             a.Add(self.a,1, wx.TOP, 10)
 
-        '''for n in range(len(listofmonitors)):
-            a = 'button' + str(n)
-            self.a = wx.Button(self, wx.ID_ANY, label=a)
-            b = str(n)
-            b.Add(self.a,1, wx.TOP, 10)'''
-            
-            #self.n = wx.StaticText(self, wx.ID_ANY, "Cycles:")
-
-        '''for n in range(len(listofmonitors)):
-            a = str(n)
-            sizer.Add(self.a,0, wx.ALL, 5)'''
-
         self.SetSizer(sizer)
         self.SetupScrolling()
-
-    def makeSizer(self,sizername):
-        a = str(sizername)
-        a_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
     def onToggleClick(self, event):
         state = event.GetEventObject().GetValue()
 
         if state == True:
             #self.label.SetLabelText("Off")
-            event.GetEventObject().SetLabel("Off 0")
+            #event.GetEventObject().SetLabel("Off")
+            button = event.GetEventObject()
+            order = "s"+" "+button.GetLabel()+" "+"0"
+            print(order)
+            self.command_interface(event, order)
 
         else:
             #self.label.SetLabeText("On")
-            event.GetEventObject().SetLabel("On 1")
+            #event.GetEventObject().SetLabel("On")
+            button = event.GetEventObject()
+            order = "s"+" "+button.GetLabel()+" "+"1"
+            print(order)
+            self.command_interface(event, order)
 
+    def command_interface(self, event, order):
+        """Read the command entered and call the corresponding function."""
+        #print("Logic Simulator: interactive command line user interface.\n"
+        #      "Enter 'h' for help.")
+        #print(self.devices.find_devices(self.devices.SWITCH))
+        #print(self.monitors.get_signal_names())
+        self.cycles_completed = 0  # number of simulation cycles completed
+
+        self.character = ""  # current character
+        self.line = ""  # current string entered by the user
+        self.cursor = 0  # cursor position
+        
+        self.get_line(order)  # get the user entry
+        command = self.read_command()  # read the first character
+        
+        #gui = Gui("Logic Simulator", path, names, devices, network,
+                      #monitors)
+
+        if command == "q":
+            dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
+            result = dlg.ShowModal()
+            dlg.Destroy()
+            if result == wx.ID_CANCEL:
+                print("The user cancelled")
+            if result == wx.ID_OK:
+                self.Close(True)
+        if command == "h":
+            self.help_command()
+        elif command == "s":
+            self.switch_command()
+        elif command == "m":
+            self.monitor_command()
+        elif command == "z":
+            self.zap_command()
+        elif command == "r":
+            self.run_command()
+        elif command == "c":
+            self.continue_command()
+        else:
+            print("Invalid command. Enter 'h' for help.")
+
+        del self.line
+
+    def get_line(self,order):
+        """Print prompt for the user and update the user entry."""
+        #self.cursor = 0
+        #self.line = input("#: ")
+        #while self.line == "":  # if the user enters a blank line
+            #self.line = input("#: ")
+        self.line = order
+
+    def read_command(self):
+        """Return the first non-whitespace character."""
+        self.skip_spaces()
+        return self.character
+        #del self.character 
+
+    def get_character(self):
+        """Move the cursor forward by one character in the user entry."""
+        if self.cursor < len(self.line):
+            self.character = self.line[self.cursor]
+            self.cursor += 1
+        else:  # end of the line
+            self.character = ""
+
+    def skip_spaces(self):
+        """Skip whitespace until a non-whitespace character is reached."""
+        self.get_character()
+        while self.character.isspace():
+            self.get_character()
+
+    def read_string(self):
+        """Return the next alphanumeric string."""
+        self.skip_spaces()
+        name_string = ""
+        if not self.character.isalpha():  # the string must start with a letter
+            print("Error! Expected a name.")
+            return None
+        while self.character.isalnum():
+            name_string = "".join([name_string, self.character])
+            self.get_character()
+        return name_string
+
+    def read_name(self):
+        """Return the name ID of the current string if valid.
+
+        Return None if the current string is not a valid name string.
+        """
+        name_string = self.read_string()
+        if name_string is None:
+            return None
+        else:
+            name_id = self.names.query(name_string)
+        if name_id is None:
+            print("Error! Unknown name.")
+        return name_id
+
+    def read_signal_name(self):
+        """Return the device and port IDs of the current signal name.
+
+        Return None if either is invalid.
+        """
+        device_id = self.read_name()
+        if device_id is None:
+            return None
+        elif self.character == ".":
+            port_id = self.read_name()
+            if port_id is None:
+                return None
+        else:
+            port_id = None
+        return [device_id, port_id]
+
+    def read_number(self, lower_bound, upper_bound):
+        """Return the current number.
+
+        Return None if no number is provided or if it falls outside the valid
+        range.
+        """
+        self.skip_spaces()
+        number_string = ""
+        if not self.character.isdigit():
+            print("Error! Expected a number.")
+            return None
+        while self.character.isdigit():
+            number_string = "".join([number_string, self.character])
+            self.get_character()
+        number = int(number_string)
+
+        if upper_bound is not None:
+            if number > upper_bound:
+                print("Number out of range.")
+                return None
+
+        if lower_bound is not None:
+            if number < lower_bound:
+                print("Number out of range.")
+                return None
+
+        return number
+
+    def help_command(self):
+        """Print a list of valid commands."""
+        print("User commands:")
+        print("r N       - run the simulation for N cycles")
+        print("c N       - continue the simulation for N cycles")
+        print("s X N     - set switch X to N (0 or 1)")
+        print("m X       - set a monitor on signal X")
+        print("z X       - zap the monitor on signal X")
+        print("h         - help (this command)")
+        print("q         - quit the program")
+        #return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
+
+    def switch_command(self):
+        """Set the specified switch to the specified signal level."""
+        switch_id = self.read_name()
+        if switch_id is not None:
+            switch_state = self.read_number(0, 1)
+            if switch_state is not None:
+                if self.devices.set_switch(switch_id, switch_state):
+                    print("Successfully set switch.")
+                else:
+                    print("Error! Invalid switch.")
+
+    def monitor_command(self):
+        """Set the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            monitor_error = self.monitors.make_monitor(device, port,
+                                                       self.cycles_completed)
+            if monitor_error == self.monitors.NO_ERROR:
+                print("Successfully made monitor.")
+            else:
+                print("Error! Could not make monitor.")
+
+    def zap_command(self):
+        """Remove the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            if self.monitors.remove_monitor(device, port):
+                print("Successfully zapped monitor")
+            else:
+                print("Error! Could not zap monitor.")
+
+    def run_network(self, cycles):
+        """Run the network for the specified number of simulation cycles.
+
+        Return True if successful.
+        """
+        for _ in range(cycles):
+            if self.network.execute_network():
+                self.monitors.record_signals()
+            else:
+                print("Error! Network oscillating.")
+                return False
+        self.monitors.display_signals()
+        return True
+
+    def run_command(self):
+        """Run the simulation from scratch."""
+        self.cycles_completed = 0
+        cycles = self.read_number(0, None)
+
+        if cycles is not None:  # if the number of cycles provided is valid
+            self.monitors.reset_monitors()
+            print("".join(["Running for ", str(cycles), " cycles"]))
+            self.devices.cold_startup()
+            if self.run_network(cycles):
+                self.cycles_completed += cycles
+
+    def continue_command(self):
+        """Continue a previously run simulation."""
+        cycles = self.read_number(0, None)
+        if cycles is not None:  # if the number of cycles provided is valid
+            if self.cycles_completed == 0:
+                print("Error! Nothing to continue. Run first.")
+            elif self.run_network(cycles):
+                self.cycles_completed += cycles
+                print(" ".join(["Continuing for", str(cycles), "cycles.",
+                                "Total:", str(self.cycles_completed)]))
+
+class scrolledpanel2(scrolled.ScrolledPanel):
+    """Configures the scrolled panel on the left to hold all switches"""
+    def __init__(self,parent,names, devices, network, monitors):
+        scrolled.ScrolledPanel.__init__(self,parent,size=(200,170))
+
+        self.names = names
+        self.devices = devices
+        self.monitors = monitors
+        self.network = network
+
+        self.monitors.get_signal_names()
+
+        listofmonitors = self.monitors.get_signal_names()[0]
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        for n in range(len(listofmonitors)):
+            a = str(n+1)
+            b = 'button' + str(n+1)
+            c = 'label' + str(n+1)
+            a = wx.BoxSizer(wx.HORIZONTAL)
+            sizer.Add(a,0, wx.ALL, 5)
+            self.c = wx.StaticText(self, label = listofmonitors[n])
+            self.a = wx.ToggleButton(self,label = listofmonitors[n])
+            self.a.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
+            a.Add(self.c,1, wx.TOP, 10)
+            a.Add(self.a,1, wx.TOP, 10)
+
+        self.SetSizer(sizer)
+        self.SetupScrolling()
+
+    def onToggleClick(self, event):
+        state = event.GetEventObject().GetValue()
+
+        if state == True:
+            #self.label.SetLabelText("Off")
+            #event.GetEventObject().SetLabel("Off")
+            button = event.GetEventObject()
+            order = "z"+" "+button.GetLabel()
+            print(order)
+            self.command_interface(event, order)
+
+        else:
+            #self.label.SetLabeText("On")
+            #event.GetEventObject().SetLabel("On")
+            button = event.GetEventObject()
+            order = "m"+" "+button.GetLabel()
+            print(order)
+            self.command_interface(event, order)
+
+    def command_interface(self, event, order):
+        """Read the command entered and call the corresponding function."""
+        #print("Logic Simulator: interactive command line user interface.\n"
+        #      "Enter 'h' for help.")
+        #print(self.devices.find_devices(self.devices.SWITCH))
+        #print(self.monitors.get_signal_names())
+        self.cycles_completed = 0  # number of simulation cycles completed
+
+        self.character = ""  # current character
+        self.line = ""  # current string entered by the user
+        self.cursor = 0  # cursor position
+        
+        self.get_line(order)  # get the user entry
+        command = self.read_command()  # read the first character
+        
+        #gui = Gui("Logic Simulator", path, names, devices, network,
+                      #monitors)
+
+        if command == "q":
+            dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
+            result = dlg.ShowModal()
+            dlg.Destroy()
+            if result == wx.ID_CANCEL:
+                print("The user cancelled")
+            if result == wx.ID_OK:
+                self.Close(True)
+        if command == "h":
+            self.help_command()
+        elif command == "s":
+            self.switch_command()
+        elif command == "m":
+            self.monitor_command()
+        elif command == "z":
+            self.zap_command()
+        elif command == "r":
+            self.run_command()
+        elif command == "c":
+            self.continue_command()
+        else:
+            print("Invalid command. Enter 'h' for help.")
+
+        del self.line
+
+    def get_line(self,order):
+        """Print prompt for the user and update the user entry."""
+        #self.cursor = 0
+        #self.line = input("#: ")
+        #while self.line == "":  # if the user enters a blank line
+            #self.line = input("#: ")
+        self.line = order
+
+    def read_command(self):
+        """Return the first non-whitespace character."""
+        self.skip_spaces()
+        return self.character
+        #del self.character 
+
+    def get_character(self):
+        """Move the cursor forward by one character in the user entry."""
+        if self.cursor < len(self.line):
+            self.character = self.line[self.cursor]
+            self.cursor += 1
+        else:  # end of the line
+            self.character = ""
+
+    def skip_spaces(self):
+        """Skip whitespace until a non-whitespace character is reached."""
+        self.get_character()
+        while self.character.isspace():
+            self.get_character()
+
+    def read_string(self):
+        """Return the next alphanumeric string."""
+        self.skip_spaces()
+        name_string = ""
+        if not self.character.isalpha():  # the string must start with a letter
+            print("Error! Expected a name.")
+            return None
+        while self.character.isalnum():
+            name_string = "".join([name_string, self.character])
+            self.get_character()
+        return name_string
+
+    def read_name(self):
+        """Return the name ID of the current string if valid.
+
+        Return None if the current string is not a valid name string.
+        """
+        name_string = self.read_string()
+        if name_string is None:
+            return None
+        else:
+            name_id = self.names.query(name_string)
+        if name_id is None:
+            print("Error! Unknown name.")
+        return name_id
+
+    def read_signal_name(self):
+        """Return the device and port IDs of the current signal name.
+
+        Return None if either is invalid.
+        """
+        device_id = self.read_name()
+        if device_id is None:
+            return None
+        elif self.character == ".":
+            port_id = self.read_name()
+            if port_id is None:
+                return None
+        else:
+            port_id = None
+        return [device_id, port_id]
+
+    def read_number(self, lower_bound, upper_bound):
+        """Return the current number.
+
+        Return None if no number is provided or if it falls outside the valid
+        range.
+        """
+        self.skip_spaces()
+        number_string = ""
+        if not self.character.isdigit():
+            print("Error! Expected a number.")
+            return None
+        while self.character.isdigit():
+            number_string = "".join([number_string, self.character])
+            self.get_character()
+        number = int(number_string)
+
+        if upper_bound is not None:
+            if number > upper_bound:
+                print("Number out of range.")
+                return None
+
+        if lower_bound is not None:
+            if number < lower_bound:
+                print("Number out of range.")
+                return None
+
+        return number
+
+    def help_command(self):
+        """Print a list of valid commands."""
+        print("User commands:")
+        print("r N       - run the simulation for N cycles")
+        print("c N       - continue the simulation for N cycles")
+        print("s X N     - set switch X to N (0 or 1)")
+        print("m X       - set a monitor on signal X")
+        print("z X       - zap the monitor on signal X")
+        print("h         - help (this command)")
+        print("q         - quit the program")
+        #return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
+
+    def switch_command(self):
+        """Set the specified switch to the specified signal level."""
+        switch_id = self.read_name()
+        if switch_id is not None:
+            switch_state = self.read_number(0, 1)
+            if switch_state is not None:
+                if self.devices.set_switch(switch_id, switch_state):
+                    print("Successfully set switch.")
+                else:
+                    print("Error! Invalid switch.")
+
+    def monitor_command(self):
+        """Set the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            monitor_error = self.monitors.make_monitor(device, port,
+                                                       self.cycles_completed)
+            if monitor_error == self.monitors.NO_ERROR:
+                print("Successfully made monitor.")
+            else:
+                print("Error! Could not make monitor.")
+
+    def zap_command(self):
+        """Remove the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            if self.monitors.remove_monitor(device, port):
+                print("Successfully zapped monitor")
+            else:
+                print("Error! Could not zap monitor.")
+
+    def run_network(self, cycles):
+        """Run the network for the specified number of simulation cycles.
+
+        Return True if successful.
+        """
+        for _ in range(cycles):
+            if self.network.execute_network():
+                self.monitors.record_signals()
+            else:
+                print("Error! Network oscillating.")
+                return False
+        self.monitors.display_signals()
+        return True
+
+    def run_command(self):
+        """Run the simulation from scratch."""
+        self.cycles_completed = 0
+        cycles = self.read_number(0, None)
+
+        if cycles is not None:  # if the number of cycles provided is valid
+            self.monitors.reset_monitors()
+            print("".join(["Running for ", str(cycles), " cycles"]))
+            self.devices.cold_startup()
+            if self.run_network(cycles):
+                self.cycles_completed += cycles
+
+    def continue_command(self):
+        """Continue a previously run simulation."""
+        cycles = self.read_number(0, None)
+        if cycles is not None:  # if the number of cycles provided is valid
+            if self.cycles_completed == 0:
+                print("Error! Nothing to continue. Run first.")
+            elif self.run_network(cycles):
+                self.cycles_completed += cycles
+                print(" ".join(["Continuing for", str(cycles), "cycles.",
+                                "Total:", str(self.cycles_completed)]))
+                
 class Gui(wx.Frame):
     """Configure the main window and all the widgets.
 
@@ -449,6 +871,17 @@ class Gui(wx.Frame):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
 
+        self.names = names
+        self.devices = devices
+        self.monitors = monitors
+        self.network = network
+
+        self.cycles_completed = 0  # number of simulation cycles completed
+
+        self.character = ""  # current character
+        self.line = ""  # current string entered by the user
+        self.cursor = 0  # cursor position
+
         #changing the initialisation parameters
         #self.SetBackgroundColour((100, 200, 100))
 
@@ -472,6 +905,7 @@ class Gui(wx.Frame):
         self.text.SetFont(font)
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
         self.run_button = wx.Button(self, wx.ID_ANY, "Run")
+        self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
         self.text2 = wx.StaticText(self, wx.ID_ANY, "Text based control:")
         self.text2.SetFont(font)
         self.text_box_command = wx.TextCtrl(self, wx.ID_ANY, "",style=wx.TE_PROCESS_ENTER) 
@@ -488,8 +922,8 @@ class Gui(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_menu)
         self.spin.Bind(wx.EVT_SPINCTRL, self.on_spin)
         self.run_button.Bind(wx.EVT_BUTTON, self.on_run_button)
-        self.run_button.Disable()
-        self.text_box_command.Bind(wx.EVT_TEXT_ENTER, self.on_text_box_command)
+        self.continue_button.Bind(wx.EVT_BUTTON, self.on_continue_button)
+        self.text_box_command.Bind(wx.EVT_TEXT_ENTER, self.command_interface)
         self.text_box.Bind(wx.EVT_TEXT_ENTER, self.on_text_box)
         self.clear_button.Bind(wx.EVT_BUTTON, self.on_clear_button)
         
@@ -510,11 +944,12 @@ class Gui(wx.Frame):
         left_sizer.Add(self.text2, 1, wx.TOP, 5)
         left_sizer.Add(self.text_box_command, 1, wx.ALL, 1)
         left_sizer.Add(self.text3, 1, wx.TOP, 5)
-        left_sizer.Add(scrolledpanel(self))
+        left_sizer.Add(scrolledpanel(self, names, devices, network, monitors))
         left_sizer.Add(self.text4, 1, wx.TOP, 5)
-        left_sizer.Add(scrolledpanel2(self))
+        left_sizer.Add(scrolledpanel2(self, names, devices, network, monitors))
         left_sizer.Add(self.clear_button, 1, wx.ALL, 1)
         left_sizer.Add(self.run_button, 1, wx.ALL, 1)
+        left_sizer.Add(self.continue_button, 1, wx.ALL, 1)
         bottom_sizer.Add(self.text_box,1, wx.EXPAND|wx.ALL, 5)         #here changing the first number to 0 holds the width fixed and changing it to 1 allows it to stretch as window is resized
 
         self.SetSizeHints(800, 800)
@@ -546,27 +981,66 @@ class Gui(wx.Frame):
         spin_value = self.spin.GetValue()
         text = "".join(["New spin control value: ", str(spin_value)])
         self.canvas.render(text)
+        return(spin_value)
+
+    def command_interface_order(self, event, order):
+        """Read the command entered and call the corresponding function."""
+        #print("Logic Simulator: interactive command line user interface.\n"
+        #      "Enter 'h' for help.")
+        #print(self.devices.find_devices(self.devices.SWITCH))
+        #print(self.monitors.get_signal_names())
+        # number of simulation cycles completed
+
+        self.character = ""  # current character
+        self.line = ""  # current string entered by the user
+        self.cursor = 0  # cursor position
+
+        self.get_line_order(order)  # get the user entry
+        command = self.read_command()  # read the first character
+        if command == "r":
+            self.run_command()
+            self.text_box_command.SetValue("")
+        elif command == "c":
+            self.continue_command()
+            self.text_box_command.SetValue("")
+        else:
+            print("Invalid command. Enter 'h' for help.")
+            self.text_box_command.SetValue("")
+
+        del self.line
+
+    def get_line_order(self, order):
+        """Print prompt for the user and update the user entry."""
+        self.line = order  
+
+    def on_continue_button(self, event):
+        """Handle the event when the user clicks the run button."""
+        text = "Continue button pressed." + str(self.on_spin(event))
+        self.canvas.render(text)
+        order = "c"+""+str(self.on_spin(event))
+        self.command_interface_order(event, order)
 
     def on_run_button(self, event):
         """Handle the event when the user clicks the run button."""
-        text = "Run button pressed."
+        text = "Run button pressed." + str(self.on_spin(event))
         self.canvas.render(text)
-        #Devices.make_switch(self, device_id, initial_state)
+        order = "r"+""+str(self.on_spin(event))
+        self.command_interface_order(event, order)
 
     def on_text_box_command(self, event):
         "Handle the event when the user enters text."
         text_box_command_value = self.text_box_command.GetValue()
         text = "".join(["New text box value: ", text_box_command_value])
         self.canvas.render(text)
-        if text_box_command_value == "q":
+        self.command_interface()
+        '''if text_box_command_value == "q":
             dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
             result = dlg.ShowModal()
             dlg.Destroy()
             if result == wx.ID_CANCEL:
                 print("The user cancelled")
             if result == wx.ID_OK:
-                self.Close(True)
-         
+                self.Close(True)'''
 
     def on_open(self, event):
         openFileDialog= wx.FileDialog(self, "Open txt file", "", "", wildcard="TXT files (*.txt)|*.txt", style=wx.FD_OPEN+wx.FD_FILE_MUST_EXIST)
@@ -595,4 +1069,232 @@ class Gui(wx.Frame):
         text_box_value = self.text_box.GetValue()
         text = "".join(["New text box value: ", text_box_value])
         self.canvas.render(text)
+    
+#--------userint functions:---------
+    def command_interface(self, event):
+        """Read the command entered and call the corresponding function."""
+        #print("Logic Simulator: interactive command line user interface.\n"
+        #      "Enter 'h' for help.")
+        #print(self.devices.find_devices(self.devices.SWITCH))
+        #print(self.monitors.get_signal_names())
+        self.cycles_completed = 0  # number of simulation cycles completed
 
+        self.character = ""  # current character
+        self.line = ""  # current string entered by the user
+        self.cursor = 0  # cursor position
+
+        self.get_line()  # get the user entry
+        command = self.read_command()  # read the first character
+        if command == "q":
+            dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
+            result = dlg.ShowModal()
+            dlg.Destroy()
+            if result == wx.ID_CANCEL:
+                print("The user cancelled")
+            if result == wx.ID_OK:
+                self.Close(True)
+        if command == "h":
+            self.help_command()
+            self.text_box_command.SetValue("")
+        elif command == "s":
+            self.switch_command()
+            self.text_box_command.SetValue("")
+        elif command == "m":
+            self.monitor_command()
+            self.text_box_command.SetValue("")
+        elif command == "z":
+            self.zap_command()
+            self.text_box_command.SetValue("")
+        elif command == "r":
+            self.run_command()
+            self.text_box_command.SetValue("")
+        elif command == "c":
+            self.continue_command()
+            self.text_box_command.SetValue("")
+        else:
+            print("Invalid command. Enter 'h' for help.")
+            self.text_box_command.SetValue("")
+
+        del self.line
+
+    def get_line(self):
+        """Print prompt for the user and update the user entry."""
+        #self.cursor = 0
+        #self.line = input("#: ")
+        #while self.line == "":  # if the user enters a blank line
+            #self.line = input("#: ")
+        self.line = self.text_box_command.GetValue()  
+        while self.line == "": 
+            pass
+
+    def read_command(self):
+        """Return the first non-whitespace character."""
+        self.skip_spaces()
+        return self.character
+        #del self.character 
+
+    def get_character(self):
+        """Move the cursor forward by one character in the user entry."""
+        if self.cursor < len(self.line):
+            self.character = self.line[self.cursor]
+            self.cursor += 1
+        else:  # end of the line
+            self.character = ""
+
+    def skip_spaces(self):
+        """Skip whitespace until a non-whitespace character is reached."""
+        self.get_character()
+        while self.character.isspace():
+            self.get_character()
+
+    def read_string(self):
+        """Return the next alphanumeric string."""
+        self.skip_spaces()
+        name_string = ""
+        if not self.character.isalpha():  # the string must start with a letter
+            print("Error! Expected a name.")
+            return None
+        while self.character.isalnum():
+            name_string = "".join([name_string, self.character])
+            self.get_character()
+        return name_string
+
+    def read_name(self):
+        """Return the name ID of the current string if valid.
+
+        Return None if the current string is not a valid name string.
+        """
+        name_string = self.read_string()
+        if name_string is None:
+            return None
+        else:
+            name_id = self.names.query(name_string)
+        if name_id is None:
+            print("Error! Unknown name.")
+        return name_id
+
+    def read_signal_name(self):
+        """Return the device and port IDs of the current signal name.
+
+        Return None if either is invalid.
+        """
+        device_id = self.read_name()
+        if device_id is None:
+            return None
+        elif self.character == ".":
+            port_id = self.read_name()
+            if port_id is None:
+                return None
+        else:
+            port_id = None
+        return [device_id, port_id]
+
+    def read_number(self, lower_bound, upper_bound):
+        """Return the current number.
+
+        Return None if no number is provided or if it falls outside the valid
+        range.
+        """
+        self.skip_spaces()
+        number_string = ""
+        if not self.character.isdigit():
+            print("Error! Expected a number.")
+            return None
+        while self.character.isdigit():
+            number_string = "".join([number_string, self.character])
+            self.get_character()
+        number = int(number_string)
+
+        if upper_bound is not None:
+            if number > upper_bound:
+                print("Number out of range.")
+                return None
+
+        if lower_bound is not None:
+            if number < lower_bound:
+                print("Number out of range.")
+                return None
+
+        return number
+
+    def help_command(self):
+        """Print a list of valid commands."""
+        print("User commands:")
+        print("r N       - run the simulation for N cycles")
+        print("c N       - continue the simulation for N cycles")
+        print("s X N     - set switch X to N (0 or 1)")
+        print("m X       - set a monitor on signal X")
+        print("z X       - zap the monitor on signal X")
+        print("h         - help (this command)")
+        print("q         - quit the program")
+        #return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
+
+    def switch_command(self):
+        """Set the specified switch to the specified signal level."""
+        switch_id = self.read_name()
+        if switch_id is not None:
+            switch_state = self.read_number(0, 1)
+            if switch_state is not None:
+                if self.devices.set_switch(switch_id, switch_state):
+                    print("Successfully set switch.")
+                else:
+                    print("Error! Invalid switch.")
+
+    def monitor_command(self):
+        """Set the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            monitor_error = self.monitors.make_monitor(device, port,
+                                                       self.cycles_completed)
+            if monitor_error == self.monitors.NO_ERROR:
+                print("Successfully made monitor.")
+            else:
+                print("Error! Could not make monitor.")
+
+    def zap_command(self):
+        """Remove the specified monitor."""
+        monitor = self.read_signal_name()
+        if monitor is not None:
+            [device, port] = monitor
+            if self.monitors.remove_monitor(device, port):
+                print("Successfully zapped monitor")
+            else:
+                print("Error! Could not zap monitor.")
+
+    def run_network(self, cycles):
+        """Run the network for the specified number of simulation cycles.
+
+        Return True if successful.
+        """
+        for _ in range(cycles):
+            if self.network.execute_network():
+                self.monitors.record_signals()
+            else:
+                print("Error! Network oscillating.")
+                return False
+        self.monitors.display_signals()
+        return True
+
+    def run_command(self):
+        """Run the simulation from scratch."""
+        self.cycles_completed = 0
+        cycles = self.read_number(0, None)
+
+        if cycles is not None:  # if the number of cycles provided is valid
+            self.monitors.reset_monitors()
+            print("".join(["Running for ", str(cycles), " cycles"]))
+            self.devices.cold_startup()
+            if self.run_network(cycles):
+                self.cycles_completed += cycles
+
+    def continue_command(self):
+        """Continue a previously run simulation."""
+        cycles = self.read_number(0, None)
+        if cycles is not None:  # if the number of cycles provided is valid
+            if self.cycles_completed == 0:
+                print("Error! Nothing to continue. Run first.")
+            elif self.run_network(cycles):
+                self.cycles_completed += cycles
+                print(" ".join(["Continuing for", str(cycles), "cycles.",
+                                "Total:", str(self.cycles_completed)]))

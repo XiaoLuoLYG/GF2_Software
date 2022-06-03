@@ -209,6 +209,7 @@ class UserInterface:
         print("z X       - zap the monitor on signal X")
         print("h         - help (this command)")
         print("q         - quit the program")
+        return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
 
     def switch_command(self):
         """Set the specified switch to the specified signal level."""
