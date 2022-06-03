@@ -265,14 +265,14 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         return
 
     #run simulation
-    def run(self, num):
+    def run(self, num,reset=False):
         size = self.GetClientSize()
-        
-        self.monitors.reset_monitors()
-        self.colours = []
-        for i in range(len(self.monitors.monitors_dictionary)):
-            self.colours.append(
-                (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
+        if reset:
+            self.monitors.reset_monitors()
+            self.colours = []
+            for i in range(len(self.monitors.monitors_dictionary)):
+                self.colours.append(
+                    (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
 
         for _ in range(num):
             if self.network.execute_network():
@@ -897,7 +897,7 @@ class Gui(wx.Frame):
 
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors, network)
-        self.canvas.run(10)
+        self.canvas.run(10,True)
 
         # Configure the widgets
         self.text = wx.StaticText(self, wx.ID_ANY, "Cycles:")
@@ -1027,7 +1027,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
         order = "r"+""+str(self.on_spin(event))
         self.command_interface_order(event, order)
-        self.canvas.run(int(str(self.on_spin(event))))
+        self.canvas.run(int(str(self.on_spin(event))),True)
 
     def on_text_box_command(self, event):
         "Handle the event when the user enters text."
