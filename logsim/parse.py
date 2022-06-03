@@ -211,8 +211,7 @@ class Parser:
             pass
         else:
             if self.symbol.type == self.scanner.NAME:
-                device_info = []
-                device_info.append(self.symbol.id)
+                device_info = [self.symbol.id]
                 # self.names_list.append(self.symbol.id)
                 # ,
                 self.symbol = self.scanner.get_symbol()
