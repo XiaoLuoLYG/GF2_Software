@@ -1027,7 +1027,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
         order = "r"+""+str(self.on_spin(event))
         self.command_interface_order(event, order)
-        self.canvas.run(int(str(self.on_spin(event))),True)
+        # self.canvas.run(int(str(self.on_spin(event))),True)
 
     def on_text_box_command(self, event):
         "Handle the event when the user enters text."
@@ -1287,18 +1287,21 @@ class Gui(wx.Frame):
             self.monitors.reset_monitors()
             print("".join(["Running for ", str(cycles), " cycles"]))
             self.devices.cold_startup()
-            if self.run_network(cycles):
-                self.cycles_completed += cycles
+            # if self.run_network(cycles):
+            self.cycles_completed += cycles
+            self.canvas.run(cycles, True)
 
     def continue_command(self):
         """Continue a previously run simulation."""
         cycles = self.read_number(0, None)
+        
         if cycles is not None:  # if the number of cycles provided is valid
             if self.cycles_completed == 0:
                 print("Error! Nothing to continue. Run first.")
-            elif self.run_network(cycles):
+            # elif self.run_network(cycles):
+            else:
                 self.cycles_completed += cycles
                 print(" ".join(["Continuing for", str(cycles), "cycles.",
                                 "Total:", str(self.cycles_completed)]))
-                self.canvas.run(int(str(self.cycles_completed)))
-        return(str(self.cycles_completed))
+                self.canvas.run(cycles)
+        
