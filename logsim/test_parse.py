@@ -34,7 +34,7 @@ def start_up(path):
         ),
         (
             "Definition_Ex2.txt",
-            True,
+            None,
         ),
     ],
 )
@@ -62,10 +62,23 @@ def test_parse_network_part(file, expected_output):
 
                          "file, error_count",
                          [("Definition_EX1.txt", 0),
-                          ("Definition_Ex2.txt", 0),
-                          ("Definition_Ex3.txt", 2)
+                          ("Definition_Ex2.txt", 1),
+                          ("Definition_Ex3.txt", 3)
                           ])
 def test_error_count(file, error_count):
+    parse = start_up(file)
+    parse.parse_network()
+    assert parse.error_count == error_count
+
+
+@pytest.mark.parametrize(
+
+                         "file, error_count",
+                         [
+                          ("Definition_Ex5.txt", 1),
+                          ])
+
+def test_the_monitor_error(file, error_count):
     parse = start_up(file)
     parse.parse_network()
     assert parse.error_count == error_count

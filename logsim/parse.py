@@ -98,7 +98,8 @@ class Parser:
             # devices.network.DEVICE_ABSENT: "Error: No such a device"
         }
         self.error_count = 0
-
+        self.warning_type1_count = 0
+        self.warning_type2_count = 0
         # # Used to check whether any sections are missed
         self.device_section = False
         self.connection_section = False
@@ -159,8 +160,6 @@ class Parser:
         # check whether we have the monitor section
             # if not self.monitor_section:
             #     self.display_error(self.NO_MONITOR_SECTION)
-
-
 
         print(f'\n total number of errors: {self.error_count}')
 
@@ -308,12 +307,12 @@ class Parser:
         # e.g FF.q connect G.g1
         # self.symbol = self.scanner.get_symbol()
         # FF
-        if self.symbol.type == self.scanner.NAME: # SW1
+        if self.symbol.type == self.scanner.NAME:  # SW1
             if self.error_count == 0:
                 first_device = self.devices.get_device(self.symbol.id)
                 if first_device is None:
                     self.display_error(self.INVALID_DEVICE_NAME)
-                    self.symbol = self.scanner.get_symbol() # connect
+                    self.symbol = self.scanner.get_symbol()  # connect
 
                 elif first_device.device_kind == self.devices.D_TYPE:
                     self.symbol = self.scanner.get_symbol()
@@ -331,9 +330,6 @@ class Parser:
                     first_device_port = None
                     self.symbol = self.scanner.get_symbol()
             else:
-                print('\033[1;32m' +
-                      'Correct errors before making the first device' +
-                      '\033[0m')
                 self.symbol = self.scanner.get_symbol()
                 if self.symbol.type == self.scanner.DOT:
                     self.symbol = self.scanner.get_symbol()
@@ -341,6 +337,15 @@ class Parser:
                         self.symbol = self.scanner.get_symbol()
                     else:
                         self.display_error(self.INVALID_PORT)
+                if self.warning_type1_count == 0:
+                    self.warning_type1_count += 1
+                    print('\033[1;32m' +
+                          'Warning : Correct' +
+                          ' errors before making the first device' +
+                          '\033[0m')
+
+                else:
+                    pass
             #  CONNECT
 
             if self.symbol.id == self.scanner.CONNECT_ID:
@@ -382,9 +387,6 @@ class Parser:
                             self.display_error(self.NO_DOT)
 
                 else:
-                    print('\033[1;32m' +
-                          'Correct errors before making the second device' +
-                          '\033[0m')
                     if self.symbol.type == self.scanner.NAME:
                         self.symbol = self.scanner.get_symbol()
                         if self.symbol.type == self.scanner.DOT:
@@ -401,6 +403,15 @@ class Parser:
                             self.display_error(self.NO_DOT)
                     else:
                         self.display_error(self.INVALID_DEVICE_NAME)
+
+                    if self.warning_type2_count == 0:
+                        self.warning_type2_count += 1
+                        print('\033[1;32m' +
+                              'Warning : Correct errors' +
+                              ' before connecting the second device' +
+                              '\033[0m')
+                    else:
+                        pass
             else:
                 self.display_error(self.NO_CONNECT_SYMBOL)
 
@@ -484,7 +495,8 @@ class Parser:
         # error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
-        print("" * symbol_pos + "^",
+        print(self.scanner.lines[self.symbol.line_number],
+              "" * symbol_pos + "^",
               '\033[1;31m' + error_content + '\033[0m')
         if not skip:
             return

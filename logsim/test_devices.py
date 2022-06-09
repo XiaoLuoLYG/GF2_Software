@@ -18,12 +18,12 @@ def devices_with_items():
     new_names = Names()
     new_devices = Devices(new_names)
 
-    [AND1_ID, NOR1_ID, SW1_ID] = new_names.lookup(["And1", "Nor1", "Sw1"])
+    [AND1_ID, NOR1_ID, SW1_ID, NOT1_ID] = new_names.lookup(["And1", "Nor1", "Sw1", "Not1"])
 
-    new_devices.make_device(AND1_ID, new_devices.AND, 2)
+    new_devices.make_device(AND1_ID, new_devices.AND, 1)
     new_devices.make_device(NOR1_ID, new_devices.NOR, 16)
     new_devices.make_device(SW1_ID, new_devices.SWITCH, 0)
-
+    new_devices.make_device(NOT1_ID, new_devices.NOT, 2)
     return new_devices
 
 
@@ -42,13 +42,14 @@ def test_find_devices(devices_with_items):
     """Test if find_devices returns the correct devices of the given kind."""
     devices = devices_with_items
     names = devices.names
-    device_names = [AND1_ID, NOR1_ID, SW1_ID] = names.lookup(["And1", "Nor1",
-                                                              "Sw1"])
+    device_names = [AND1_ID, NOR1_ID, SW1_ID, NOT1_ID] = names.lookup(["And1", "Nor1",
+                                                              "Sw1", "Not1"])
 
     assert devices.find_devices() == device_names
     assert devices.find_devices(devices.AND) == [AND1_ID]
     assert devices.find_devices(devices.NOR) == [NOR1_ID]
     assert devices.find_devices(devices.SWITCH) == [SW1_ID]
+    assert devices.find_devices(devices.NOT) == [NOT1_ID]
     assert devices.find_devices(devices.XOR) == []
 
 
