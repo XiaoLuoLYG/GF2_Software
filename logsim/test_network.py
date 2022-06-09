@@ -218,7 +218,7 @@ def test_execute_xor(new_network):
     ("OR1_ID", ["LOW", "LOW", "LOW"], "LOW", "devices.OR"),
     ("OR1_ID", ["LOW", "HIGH", "HIGH"], "HIGH", "devices.OR"),
     ("NOR1_ID", ["HIGH", "LOW", "HIGH"], "LOW", "devices.NOR"),
-    ("NOR1_ID", ["LOW", "LOW", "LOW"], "HIGH", "devices.NOR"),
+    ("NOR1_ID", ["LOW", "LOW", "LOW"], "HIGH", "devices.NOR")
 ])
 def test_execute_non_xor_gates(new_network, gate_id, switch_outputs,
                                gate_output, gate_kind):
