@@ -34,7 +34,7 @@ def start_up(path):
         ),
         (
             "Definition_Ex2.txt",
-            None,
+            True,
         ),
     ],
 )
@@ -62,8 +62,8 @@ def test_parse_network_part(file, expected_output):
 
                          "file, error_count",
                          [("Definition_EX1.txt", 0),
-                          ("Definition_Ex2.txt", 1),
-                          ("Definition_Ex3.txt", 3)
+                          ("Definition_Ex2.txt", 0),
+                          ("Definition_Ex3.txt", 0)
                           ])
 def test_error_count(file, error_count):
     parse = start_up(file)
