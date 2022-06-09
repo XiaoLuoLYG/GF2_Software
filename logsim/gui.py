@@ -7,6 +7,8 @@ Classes:
 MyGLCanvas - handles all canvas drawing operations.
 Gui - configures the main window and all the widgets.
 """
+import builtins
+from distutils.command.config import LANG_EXT
 import os
 import wx
 import wx.lib.scrolledpanel as scrolled
@@ -21,7 +23,7 @@ from monitors import Monitors
 from scanner import Scanner
 from parse import Parser
 from userint import UserInterface
-
+builtins.__dict__['_'] = wx.GetTranslation
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
 
@@ -265,14 +267,14 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         return
 
     #run simulation
-    def run(self, num):
+    def run(self, num,reset=False):
         size = self.GetClientSize()
-        
-        self.monitors.reset_monitors()
-        self.colours = []
-        for i in range(len(self.monitors.monitors_dictionary)):
-            self.colours.append(
-                (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
+        if reset:
+            self.monitors.reset_monitors()
+            self.colours = []
+            for i in range(len(self.monitors.monitors_dictionary)):
+                self.colours.append(
+                    (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
 
         for _ in range(num):
             if self.network.execute_network():
@@ -870,6 +872,18 @@ class Gui(wx.Frame):
     def __init__(self, title, path, names, devices, network, monitors):
         """Initialise widgets and layout."""
         super().__init__(parent=None, title=title, size=(800, 600))
+        if os.getenv('LANG') == "zh_CN":
+            self.locale = None
+            wx.Locale.AddCatalogLookupPathPrefix('locale')
+            if self.locale:
+                assert sys.getrefcount(self.locale) <= 2
+                del self.locale
+
+            self.locale = wx.Locale(wx.LANGUAGE_CHINESE_SIMPLIFIED)
+            if self.locale.IsOk():
+                self.locale.AddCatalog("zh_CN")
+            else:
+                self.locale = None
 
         self.names = names
         self.devices = devices
@@ -897,14 +911,14 @@ class Gui(wx.Frame):
 
         # Canvas for drawing signals
         self.canvas = MyGLCanvas(self, devices, monitors, network)
-        self.canvas.run(10)
+        self.canvas.run(10,True)
 
         # Configure the widgets
-        self.text = wx.StaticText(self, wx.ID_ANY, "Cycles:")
+        self.text = wx.StaticText(self, wx.ID_ANY, _(u"Cycles:"))
         font = wx.Font(10,wx.DECORATIVE, wx.NORMAL, wx.BOLD, True)
         self.text.SetFont(font)
         self.spin = wx.SpinCtrl(self, wx.ID_ANY, "10")
-        self.run_button = wx.Button(self, wx.ID_ANY, "Run")
+        self.run_button = wx.Button(self, wx.ID_ANY, _("Run"))
         self.continue_button = wx.Button(self, wx.ID_ANY, "Continue")
         self.text2 = wx.StaticText(self, wx.ID_ANY, "Text based control:")
         self.text2.SetFont(font)
@@ -1027,7 +1041,7 @@ class Gui(wx.Frame):
         self.canvas.render(text)
         order = "r"+""+str(self.on_spin(event))
         self.command_interface_order(event, order)
-        self.canvas.run(int(str(self.on_spin(event))))
+        # self.canvas.run(int(str(self.on_spin(event))),True)
 
     def on_text_box_command(self, event):
         "Handle the event when the user enters text."
@@ -1053,11 +1067,25 @@ class Gui(wx.Frame):
         print("File chosen=",openFileDialog.GetPath())
         
         path = openFileDialog.GetPath()
+        # names_new = Names()
+        # devices_new = Devices(names_new)
+        # network_new = Network(names_new, devices_new)
+        # monitors_new = Monitors(names_new, devices_new, network_new)
+        names = Names()
+        devices = Devices(names)
+        network = Network(names, devices)
+        monitors = Monitors(names, devices, network)
         if os.path.exists(path):
+            scanner_new = Scanner(path, names)
+            parser_new = Parser(names, devices, network, monitors, scanner_new)
+            self.canvas = MyGLCanvas(self, devices, monitors, network)
+            self.canvas.run(10,True)
             with open(path) as fobj:
                 for line in fobj:
                     self.text_box.WriteText(line)
             self.text_box.WriteText("\n\n")
+
+            
             print(path)
 
     def on_clear_button(self, event):
@@ -1287,18 +1315,21 @@ class Gui(wx.Frame):
             self.monitors.reset_monitors()
             print("".join(["Running for ", str(cycles), " cycles"]))
             self.devices.cold_startup()
-            if self.run_network(cycles):
-                self.cycles_completed += cycles
+            # if self.run_network(cycles):
+            self.cycles_completed += cycles
+            self.canvas.run(cycles, True)
 
     def continue_command(self):
         """Continue a previously run simulation."""
         cycles = self.read_number(0, None)
+        
         if cycles is not None:  # if the number of cycles provided is valid
             if self.cycles_completed == 0:
                 print("Error! Nothing to continue. Run first.")
-            elif self.run_network(cycles):
+            # elif self.run_network(cycles):
+            else:
                 self.cycles_completed += cycles
                 print(" ".join(["Continuing for", str(cycles), "cycles.",
                                 "Total:", str(self.cycles_completed)]))
-                self.canvas.run(int(str(self.cycles_completed)))
-        return(str(self.cycles_completed))
+                self.canvas.run(cycles)
+        
