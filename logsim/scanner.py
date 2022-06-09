@@ -127,38 +127,38 @@ class Scanner:
                 # symbol.id = self.names.query(self.name_string)
                 [symbol.id] = self.names.lookup([self.name_string])
 
-            print(self.name_string, end=' ')
+            # print(self.name_string, end=' ')
 
         elif self.current_character.isdigit():  # number
             symbol.id = self.get_number()[0]
             # [symbol.id] = self.names.lookup([number_get])
             symbol.type = self.NUMBER
-            print(symbol.id, end=' ')
+            # print(symbol.id, end=' ')
 
         elif self.current_character == ",":
             symbol.type = self.COMMA
-            print(",", end=' ')
+            # print(",", end=' ')
             self.advance()
 
         elif self.current_character == "{":
             symbol.type = self.CURLY_OPEN
             self.advance()
-            print("{", end=' ')
+            # print("{", end=' ')
 
         elif self.current_character == "}":
             symbol.type = self.CURLY_CLOSE
             self.advance()
-            print("}", end=' ')
+            # print("}", end=' ')
 
         elif self.current_character == ";":
             symbol.type = self.SEMICOLON
             self.advance()
-            print(";", end=' ')
+            # print(";", end=' ')
 
         elif self.current_character == ".":
             symbol.type = self.DOT
             self.advance()
-            print(".", end=' ')
+            # print(".", end=' ')
         # etc for other punctuation
 
         elif self.current_character == "#":  # single line comment

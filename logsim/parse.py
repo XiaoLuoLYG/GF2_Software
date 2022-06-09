@@ -8,8 +8,6 @@ Classes
 -------
 Parser - parses the definition file and builds the logic network.
 """
-
-
 # from zmq import device
 # from logsim.scanner import Scanner
 
@@ -161,6 +159,9 @@ class Parser:
         # check whether we have the monitor section
             # if not self.monitor_section:
             #     self.display_error(self.NO_MONITOR_SECTION)
+
+
+
         print(f'\n total number of errors: {self.error_count}')
 
         if self.error_count == 0:
@@ -307,12 +308,12 @@ class Parser:
         # e.g FF.q connect G.g1
         # self.symbol = self.scanner.get_symbol()
         # FF
-        if self.symbol.type == self.scanner.NAME:
+        if self.symbol.type == self.scanner.NAME: # SW1
             if self.error_count == 0:
                 first_device = self.devices.get_device(self.symbol.id)
                 if first_device is None:
                     self.display_error(self.INVALID_DEVICE_NAME)
-                    self.symbol = self.scanner.get_symbol()
+                    self.symbol = self.scanner.get_symbol() # connect
 
                 elif first_device.device_kind == self.devices.D_TYPE:
                     self.symbol = self.scanner.get_symbol()
@@ -473,7 +474,7 @@ class Parser:
                     return None
             return (device, None)
         else:
-            self.display_error(self.INVALID_DEVICE_NAME, skip=False)
+            self.display_error(self.INVALID_DEVICE_NAME)
             return None
 
     def display_error(self, error_type, skip=True):
