@@ -244,6 +244,14 @@ class Network:
             else:
                 output_signal = self.devices.HIGH
 
+        if device.device_kind == self.devices.NOT:
+            # Invert the single input
+            if input_signal_list[0] == self.devices.LOW:
+                # or invert_sign()
+                output_signal = self.devices.HIGH
+            else:
+                output_signal = self.devices.LOW
+                
         # Update and store the new signal
         signal = self.get_output_signal(device_id, None)
         target = output_signal
