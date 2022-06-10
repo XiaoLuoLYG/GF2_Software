@@ -95,7 +95,6 @@ class Parser:
             devices.DEVICE_PRESENT: "Error: Device present",
             monitors.NOT_OUTPUT: "Error: Not output",
             monitors.MONITOR_PRESENT: "Error: Monitor present",
-            # devices.network.DEVICE_ABSENT: "Error: No such a device"
         }
         self.error_count = 0
         self.warning_type1_count = 0
@@ -491,8 +490,6 @@ class Parser:
     def display_error(self, error_type, skip=True):
         """Display errors."""
         self.error_count += 1
-
-        # error_position = self.scanner.lines[self.symbol.line_number]
         error_content = self.error_dict[error_type]
         symbol_pos = self.symbol.position
         print(self.scanner.lines[self.symbol.line_number],
