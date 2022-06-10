@@ -270,7 +270,7 @@ class Network:
                 output_signal = self.devices.HIGH
             else:
                 output_signal = self.devices.LOW
-                
+
         # Update and store the new signal
         signal = self.get_output_signal(device_id, None)
         target = output_signal
@@ -428,8 +428,9 @@ class Network:
             for device_id in xor_devices:  # execute XOR devices
                 if not self.execute_gate(device_id, None, None):
                     return False
-            for device_id in not_devices: # execute NOT devices
-                if not self.execute_gate(device_id, self.devices.LOW, self.devices.LOW) :
+            for device_id in not_devices:  # execute NOT devices
+                if not self.execute_gate(
+                        device_id, self.devices.HIGH, self.devices.LOW):
                     return False
             if self.steady_state:
                 break
