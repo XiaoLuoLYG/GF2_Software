@@ -28,6 +28,8 @@ from gui import Gui
 
 
 
+
+
 def main(arg_list):
     """Parse the command line options and arguments specified in arg_list.
 
@@ -85,10 +87,10 @@ def main(arg_list):
             app = wx.App()
             #builtins._ = wx.GetTranslation
             #locale = wx.Locale(wx.LANGUAGE_CHINESE_SIMPLIFIED)
-            ##locale.Init(wx.LANGUAGE_CHINESE)
+            #locale.Init(wx.LANGUAGE_CHINESE)
             #locale.AddCatalogLookupPathPrefix('.locale')
             #locale.AddCatalog('po_file')
-            ## app.updateLanguage('cn')
+            # app.updateLanguage('cn')
             gui = Gui("Logic Simulator", path, names, devices, network,
                       monitors)
             gui.Show(True)
