@@ -302,7 +302,7 @@ class MyGLCanvas(wxcanvas.GLCanvas):
 class scrolledpanel(scrolled.ScrolledPanel):
     """Configures the scrolled panel on the left to hold all switches"""
     def __init__(self,parent,names, devices, network, monitors):
-        scrolled.ScrolledPanel.__init__(self,parent,size=(200,170))
+        scrolled.ScrolledPanel.__init__(self,parent,size=(200,130))
 
         self.names = names
         self.devices = devices
@@ -311,43 +311,58 @@ class scrolledpanel(scrolled.ScrolledPanel):
 
         self.monitors.get_signal_names()
 
-        listofmonitors = self.monitors.get_signal_names()[1]
+        listofswitches = []
+        for i in self.devices.devices_list:
+            if i.device_kind == 7:
+                listofswitches.append(self.names.get_name_string(i.device_id))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-
-        for n in range(len(listofmonitors)):
+        global label
+        label = []
+        global button
+        button = []
+        for n in range(len(listofswitches)):
             a = str(n+1)
-            b = 'button' + str(n+1)
-            c = 'label' + str(n+1)
             a = wx.BoxSizer(wx.HORIZONTAL)
             sizer.Add(a,0, wx.ALL, 5)
-            self.c = wx.StaticText(self, label = listofmonitors[n])
-            self.a = wx.ToggleButton(self,label = listofmonitors[n])
-            self.a.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
-            a.Add(self.c,1, wx.TOP, 10)
-            a.Add(self.a,1, wx.TOP, 10)
-
+            setattr(self, "button%s" % str(n+1), 
+                    wx.ToggleButton(self,label = listofswitches[n]))
+            btn = getattr(self, "button%s" % str(n+1))
+            btn.Bind(wx.EVT_TOGGLEBUTTON, self.onToggleClick)
+            setattr(self, "label%s" % str(n+1),
+                    wx.StaticText(self,label = "On"))
+            lbl = getattr(self, "label%s" % str(n+1))
+            label.append(lbl) 
+            button.append(btn)
+            a.Add(lbl, 1, wx.TOP, 10)
+            a.Add(btn, 1, wx.TOP, 10)
+        
         self.SetSizer(sizer)
         self.SetupScrolling()
 
     def onToggleClick(self, event):
         state = event.GetEventObject().GetValue()
-
+        b=event.GetEventObject()
+        c=event.GetEventObject().GetLabel()
+        print(label)
+        print(button)
         if state == True:
-            #self.label.SetLabelText("Off")
-            #event.GetEventObject().SetLabel("Off")
-            button = event.GetEventObject()
-            order = "s"+" "+button.GetLabel()+" "+"0"
+            thebutton = event.GetEventObject()
+            order = "s"+" "+thebutton.GetLabel()+" "+"0"
             print(order)
             self.command_interface(event, order)
+            print(thebutton.GetName())
+            thelabel = label[button.index(b)]
+            thelabel.SetLabel("Off")
 
         else:
-            #self.label.SetLabeText("On")
-            #event.GetEventObject().SetLabel("On")
-            button = event.GetEventObject()
-            order = "s"+" "+button.GetLabel()+" "+"1"
+            thebutton = event.GetEventObject()
+            order = "s"+" "+thebutton.GetLabel()+" "+"1"
             print(order)
             self.command_interface(event, order)
+            print(thebutton.GetName())
+            thelabel = label[button.index(b)]
+            thelabel.SetLabel("On")
 
     def command_interface(self, event, order):
         """Read the command entered and call the corresponding function."""
@@ -490,18 +505,6 @@ class scrolledpanel(scrolled.ScrolledPanel):
 
         return number
 
-    def help_command(self):
-        """Print a list of valid commands."""
-        print("User commands:")
-        print("r N       - run the simulation for N cycles")
-        print("c N       - continue the simulation for N cycles")
-        print("s X N     - set switch X to N (0 or 1)")
-        print("m X       - set a monitor on signal X")
-        print("z X       - zap the monitor on signal X")
-        print("h         - help (this command)")
-        print("q         - quit the program")
-        #return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
-
     def switch_command(self):
         """Set the specified switch to the specified signal level."""
         switch_id = self.read_name()
@@ -575,16 +578,18 @@ class scrolledpanel(scrolled.ScrolledPanel):
 class scrolledpanel2(scrolled.ScrolledPanel):
     """Configures the scrolled panel on the left to hold all switches"""
     def __init__(self,parent,names, devices, network, monitors):
-        scrolled.ScrolledPanel.__init__(self,parent,size=(200,170))
+        scrolled.ScrolledPanel.__init__(self,parent,size=(200,130))
 
         self.names = names
         self.devices = devices
         self.monitors = monitors
         self.network = network
 
-        self.monitors.get_signal_names()
+        listofmonitors = []
+        for (device_id, output_id), value in self.monitors.monitors_dictionary.items():
 
-        listofmonitors = self.monitors.get_signal_names()[0]
+            listofmonitors.append(self.devices.get_signal_name(
+                device_id, output_id))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -607,16 +612,12 @@ class scrolledpanel2(scrolled.ScrolledPanel):
         state = event.GetEventObject().GetValue()
 
         if state == True:
-            #self.label.SetLabelText("Off")
-            #event.GetEventObject().SetLabel("Off")
             button = event.GetEventObject()
             order = "z"+" "+button.GetLabel()
             print(order)
             self.command_interface(event, order)
 
         else:
-            #self.label.SetLabeText("On")
-            #event.GetEventObject().SetLabel("On")
             button = event.GetEventObject()
             order = "m"+" "+button.GetLabel()
             print(order)
@@ -763,18 +764,6 @@ class scrolledpanel2(scrolled.ScrolledPanel):
 
         return number
 
-    def help_command(self):
-        """Print a list of valid commands."""
-        print("User commands:")
-        print("r N       - run the simulation for N cycles")
-        print("c N       - continue the simulation for N cycles")
-        print("s X N     - set switch X to N (0 or 1)")
-        print("m X       - set a monitor on signal X")
-        print("z X       - zap the monitor on signal X")
-        print("h         - help (this command)")
-        print("q         - quit the program")
-        #return("User commands:\nr N       - run the simulation for N cycles\nc N       - continue the simulation for N cycles\ns X N     - set switch X to N (0 or 1)\nm X       - set a monitor on signal X\nz X       - zap the monitor on signal X\nh         - help (this command)\nq         - quit the program")
-
     def switch_command(self):
         """Set the specified switch to the specified signal level."""
         switch_id = self.read_name()
@@ -894,9 +883,26 @@ class Gui(wx.Frame):
             self.locale.AddCatalog("zh_CN")
         else:
             self.locale = None
+        
+        #get list of devices and their outputs if they have any
+        listofoutputs = []
+        for i in self.devices.devices_list:
+            for output_id in i.outputs:
+                if output_id == None:
+                    listofoutputs.append(self.names.get_name_string(i.device_id))
+                    if i.outputs[output_id] != 0:
+                        print(self.names.get_name_string(i.outputs[output_id]))
+                else:
+                    deviceandoutput = self.names.get_name_string(i.device_id)+"."+self.names.get_name_string(output_id)
+                    listofoutputs.append(deviceandoutput)
 
-        #changing the initialisation parameters
-        #self.SetBackgroundColour((100, 200, 100))
+        listofinputs = []
+        for i in self.devices.devices_list:
+            for input_id in i.inputs:
+                device = (self.names.get_name_string(i.device_id))
+                inputs = self.names.get_name_string(input_id)
+                deviceandinputs = device+"."+inputs
+                listofinputs.append(deviceandinputs)
 
         # Configure the file menu
         fileMenu = wx.Menu()                       #this adds in a "menu" button
@@ -925,11 +931,20 @@ class Gui(wx.Frame):
         self.text_box_command.SetHint('Type function here')
         self.text_box = wx.TextCtrl(self, wx.ID_ANY, "",
                                     style=wx.TE_PROCESS_ENTER|wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        self.clear_button = wx.Button(self, wx.ID_ANY, "clear")
+        self.clear_button = wx.Button(self, wx.ID_ANY, "Clear Text Box")
         self.text3 = wx.StaticText(self, wx.ID_ANY, "Switches:")
         self.text3.SetFont(font)
         self.text4 = wx.StaticText(self, wx.ID_ANY, "Monitors:")
         self.text4.SetFont(font)
+        self.text5 = wx.StaticText(self, wx.ID_ANY, "Connections:")
+        self.text5.SetFont(font)
+        self.combo1 = wx.ComboBox(self, choices = listofoutputs, style = wx.CB_READONLY)
+        self.combo2 = wx.ComboBox(self, choices = listofinputs, style = wx.CB_READONLY)
+        self.text6 = wx.StaticText(self, wx.ID_ANY, "connect")
+        self.break_connect_button = wx.Button(self, wx.ID_ANY, "Break Connection")
+        self.connect_button = wx.Button(self, wx.ID_ANY, "Connect")
+        self.text7 = wx.StaticText(self, wx.ID_ANY, "Command buttons:")
+        self.text7.SetFont(font)
         
         # Bind events to widgets                #this assigns the functions interacting with the widgets will actually do
         self.Bind(wx.EVT_MENU, self.on_menu)
@@ -939,18 +954,28 @@ class Gui(wx.Frame):
         self.text_box_command.Bind(wx.EVT_TEXT_ENTER, self.command_interface)
         self.text_box.Bind(wx.EVT_TEXT_ENTER, self.on_text_box)
         self.clear_button.Bind(wx.EVT_BUTTON, self.on_clear_button)
+        self.combo1.Bind(wx.EVT_COMBOBOX,self.on_combo)
+        self.combo2.Bind(wx.EVT_COMBOBOX,self.on_combo)
+        self.break_connect_button.Bind(wx.EVT_BUTTON, self.on_break_connect_button)
+        self.connect_button.Bind(wx.EVT_BUTTON, self.on_connect_button)
         
         # Configure sizers for layout
         main_sizer = wx.BoxSizer(wx.HORIZONTAL)     
         right_sizer = wx.BoxSizer(wx.VERTICAL)
         bottom_sizer = wx.BoxSizer()
         left_sizer = wx.BoxSizer(wx.VERTICAL)
-        
-        #main_sizer.Add(self.canvas, 5, wx.EXPAND | wx.ALL, 5)  
-        main_sizer.Add(left_sizer, 0, wx.ALL, 5)                       #the first number represents the proportion and the second the border
+        combo_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        combo_sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+          
+        main_sizer.Add(left_sizer, 0, wx.ALL, 5)                       
         main_sizer.Add(right_sizer, 5, wx.EXPAND|wx.ALL, 5) 
         right_sizer.Add(self.canvas, 10, wx.EXPAND | wx.ALL, 5)
-        right_sizer.Add(bottom_sizer,5, wx.EXPAND | wx.ALL, 5)                      
+        right_sizer.Add(bottom_sizer,5, wx.EXPAND | wx.ALL, 5)
+        combo_sizer.Add(self.combo1,1,wx.ALL,1)
+        combo_sizer.Add(self.text6, 1, wx.ALL, 1)
+        combo_sizer.Add(self.combo2,1,wx.ALL,1)
+        combo_sizer2.Add(self.break_connect_button) 
+        combo_sizer2.Add(self.connect_button)                      
         
         left_sizer.Add(self.text, 1, wx.TOP, 1)
         left_sizer.Add(self.spin, 1, wx.ALL, 1)
@@ -960,17 +985,21 @@ class Gui(wx.Frame):
         left_sizer.Add(scrolledpanel(self, names, devices, network, monitors))
         left_sizer.Add(self.text4, 1, wx.TOP, 5)
         left_sizer.Add(scrolledpanel2(self, names, devices, network, monitors))
+        left_sizer.Add(self.text5, 1, wx.TOP, 5)
+        left_sizer.Add(combo_sizer, 1, wx.ALL,1)
+        left_sizer.Add(combo_sizer2, 1, wx.ALL,1)
+        left_sizer.Add(self.text7, 1, wx.TOP, 5)
         left_sizer.Add(self.clear_button, 1, wx.ALL, 1)
         left_sizer.Add(self.run_button, 1, wx.ALL, 1)
         left_sizer.Add(self.continue_button, 1, wx.ALL, 1)
-        bottom_sizer.Add(self.text_box,1, wx.EXPAND|wx.ALL, 5)         #here changing the first number to 0 holds the width fixed and changing it to 1 allows it to stretch as window is resized
+        bottom_sizer.Add(self.text_box,1, wx.EXPAND|wx.ALL, 5)          
 
         self.SetSizeHints(800, 800)
         self.SetSizer(main_sizer)
 
     def on_menu(self, event):
         """Handle the event when the user selects a menu item."""
-        Id = event.GetId()                                                 #now the event.GetId() simplies finds out which button was clicked
+        Id = event.GetId()                                               
         if Id == wx.ID_EXIT:
             dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
             result = dlg.ShowModal()
@@ -980,12 +1009,11 @@ class Gui(wx.Frame):
             if result == wx.ID_OK:
                 self.Close(True)
         if Id == wx.ID_ABOUT:
-            wx.MessageBox("Logic Simulator\nCreated by Mojisola Agboola\n2017",
+            wx.MessageBox("Logic Simulator\nCreated by Team 20\n2022",
                           "About Logsim", wx.ICON_INFORMATION | wx.OK)
         if Id == wx.ID_OPEN:
             self.on_open(True)
         if Id == wx.ID_HELP:
-            #a = str(UserInterface.help_command(self))
             self.text_box.WriteText(str(UserInterface.help_command(self)))
             self.text_box.WriteText("\n\n")
 
@@ -1042,21 +1070,6 @@ class Gui(wx.Frame):
         self.command_interface_order(event, order)
         # self.canvas.run(int(str(self.on_spin(event))),True)
 
-    def on_text_box_command(self, event):
-        "Handle the event when the user enters text."
-        text_box_command_value = self.text_box_command.GetValue()
-        text = "".join(["New text box value: ", text_box_command_value])
-        self.canvas.render(text)
-        self.command_interface()
-        '''if text_box_command_value == "q":
-            dlg = wx.MessageDialog(self,"Are you sure you want to exit?","Confirm exit",wx.CANCEL | wx.OK)
-            result = dlg.ShowModal()
-            dlg.Destroy()
-            if result == wx.ID_CANCEL:
-                print("The user cancelled")
-            if result == wx.ID_OK:
-                self.Close(True)'''
-
     def on_open(self, event):
         openFileDialog= wx.FileDialog(self, "Open txt file", "", "", wildcard="TXT files (*.txt)|*.txt", style=wx.FD_OPEN+wx.FD_FILE_MUST_EXIST)
 
@@ -1085,6 +1098,72 @@ class Gui(wx.Frame):
         text = "".join(["New text box value: ", text_box_value])
         self.canvas.render(text)
     
+    def on_combo(self, event):
+        "Handle the event the user chooses something from the drop down"
+        on_combo_value = self.combo1.GetValue()
+
+    def on_break_connect_button(self, event):
+        on_combo_value = self.combo1.GetValue()
+        on_combo_value2 = self.combo2.GetValue()
+        print("break", " ", on_combo_value, " ", "and", " ", on_combo_value2)
+
+        first_device = on_combo_value.split('.')[0]
+        if len(on_combo_value.split('.')) == 1: 
+            first_port = None
+        else:
+            first_port = on_combo_value.split('.')[1]
+        second_device = on_combo_value2.split('.')[0]
+        second_port = on_combo_value2.split('.')[1]
+
+        first_device_id = self.names.query(first_device)
+        if first_port != None:
+            first_port_id = self.names.query(first_port)
+        else:
+            first_port_id = None
+        second_device_id = self.names.query(second_device)
+        second_port_id = self.names.query(second_port)
+
+        self.network.break_connection(first_device_id, first_port_id, second_device_id, second_port_id)
+
+        first_device1 = self.devices.get_device(first_device_id)
+        second_device2 = self.devices.get_device(second_device_id)
+
+        print(second_device2.inputs)
+        print("break done")
+        
+    def on_connect_button(self, event):
+        on_combo_value = self.combo1.GetValue()
+        on_combo_value2 = self.combo2.GetValue()
+        print("connect", " ", on_combo_value, " ", "and", " ", on_combo_value2)
+
+        #grab ids of everything in the comboboxes 
+        #first_device_id, first_port_id, second_device_id, second_port_id
+        first_device = on_combo_value.split('.')[0]
+        if len(on_combo_value.split('.')) == 1: 
+            first_port = None
+        else:
+            first_port = on_combo_value.split('.')[1]
+        second_device = on_combo_value2.split('.')[0]
+        second_port = on_combo_value2.split('.')[1]
+
+        first_device_id = self.names.query(first_device)
+        if first_port != None:
+            first_port_id = self.names.query(first_port)
+        else:
+            first_port_id = None
+        second_device_id = self.names.query(second_device)
+        second_port_id = self.names.query(second_port)
+
+        print(first_device_id, first_port_id, second_device_id, second_port_id)
+        
+        self.network.make_connection(first_device_id, first_port_id, second_device_id, second_port_id)
+
+        first_device1 = self.devices.get_device(first_device_id)
+        second_device2 = self.devices.get_device(second_device_id)
+
+        print(second_device2.inputs)
+        print("connect done")
+
 #--------userint functions:---------
     def command_interface(self, event):
         """Read the command entered and call the corresponding function."""
