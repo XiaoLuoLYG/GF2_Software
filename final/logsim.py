@@ -26,71 +26,8 @@ from parse import Parser
 from userint import UserInterface
 from gui import Gui
 
-#_________________IMPORTANT: CHANGE GUI MODULE________________#
 
 
-# language domain
-langDomain = "LOGIC SIM APP"
-# languages you want to support
-supLang = {u"en": wx.LANGUAGE_ENGLISH,
-           u"cn": wx.LANGUAGE_CHINESE
-           }
-
-
-def _displayHook(obj):
-    if obj is not None:
-        print(repr(obj))
-
-
-# add translation macro to builtin similar to what gettext does
-builtins.__dict__['_'] = wx.GetTranslation
-
-
-class BaseApp(wx.App, InspectionMixin):
-    def OnInit(self):
-        self.Init()  # InspectionMixin
-        # work around for Python stealing "_"
-        sys.displayhook = _displayHook
-
-        self.appName = "Logic Simulator"
-
-        return True
-
-
-    def updateLanguage(self, lang):
-        """
-        Update the language to the requested one.
-
-        Make *sure* any existing locale is deleted before the new
-        one is created.  The old C++ object needs to be deleted
-        before the new one is created, and if we just assign a new
-        instance to the old Python variable, the old C++ locale will
-        not be destroyed soon enough, likely causing a crash.
-
-        :param string `lang`: one of the supported language codes
-
-        """
-        # if an unsupported language is requested default to English
-        print(lang)
-        if lang in supLang:
-            print(True)
-            selLang = supLang[lang]
-        else:
-            selLang = wx.LANGUAGE_ENGLISH
-        print(supLang)
-        print(selLang)
-
-        self.locale = wx.Locale()
-        if self.locale:
-            assert sys.getrefcount(self.locale) <= 2
-            del self.locale
-
-        # # create a locale object for this language
-        self.locale = wx.Locale(selLang)
-        if self.locale.IsOk():
-            self.locale.AddCatalog(langDomain)
-        else:
-            self.locale = None
 
 
 def main(arg_list):
@@ -148,11 +85,11 @@ def main(arg_list):
         if parser.parse_network():
             # Initialise an instance of the gui.Gui() class
             app = wx.App()
-            builtins._ = wx.GetTranslation
-            locale = wx.Locale(wx.LANGUAGE_CHINESE_SIMPLIFIED)
+            #builtins._ = wx.GetTranslation
+            #locale = wx.Locale(wx.LANGUAGE_CHINESE_SIMPLIFIED)
             #locale.Init(wx.LANGUAGE_CHINESE)
-            locale.AddCatalogLookupPathPrefix('.locale')
-            locale.AddCatalog('po_file')
+            #locale.AddCatalogLookupPathPrefix('.locale')
+            #locale.AddCatalog('po_file')
             # app.updateLanguage('cn')
             gui = Gui("Logic Simulator", path, names, devices, network,
                       monitors)

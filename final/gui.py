@@ -1,4 +1,7 @@
-"""Implement the graphical user interface for the Logic Simulator.
+
+"""
+
+Implement the graphical user interface for the Logic Simulator.
 Used in the Logic Simulator project to enable the user to run the simulation
 or adjust the network properties.
 
@@ -22,6 +25,7 @@ from monitors import Monitors
 from scanner import Scanner
 from parse import Parser
 from userint import UserInterface
+
 
 class MyGLCanvas(wxcanvas.GLCanvas):
     """Handle all drawing operations.
@@ -116,10 +120,10 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         self.render_text(text, 10, 10)
 
         # Draw a sample signal trace
-        
-        #GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
-        #GL.glBegin(GL.GL_LINE_STRIP)
-        #for i in range(10):
+
+        # GL.glColor3f(0.0, 0.0, 1.0)  # signal trace is blue
+        # GL.glBegin(GL.GL_LINE_STRIP)
+        # for i in range(10):
         #    x = (i * 20) + 10
         #    x_next = (i * 20) + 30
         #    if i % 2 == 0:
@@ -128,9 +132,9 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         #        y = 100
         #    GL.glVertex2f(x, y)
         #    GL.glVertex2f(x_next, y)
-        #GL.glEnd()
-        
-        #Draw signal simulation
+        # GL.glEnd()
+
+        # Draw signal simulation
 
         if len(self.signals) > 0:
             # ruler
@@ -265,15 +269,16 @@ class MyGLCanvas(wxcanvas.GLCanvas):
         GL.glEnd()
         return
 
-    #run simulation
-    def run(self, num,reset=False):
+    # run simulation
+    def run(self, num, reset=False):
         size = self.GetClientSize()
         if reset:
             self.monitors.reset_monitors()
             self.colours = []
             for i in range(len(self.monitors.monitors_dictionary)):
                 self.colours.append(
-                    (random.uniform(0, 0.9), random.uniform(0, 0.9), random.uniform(0, 0.9)))
+                    (random.uniform(0, 0.9),
+                     random.uniform(0, 0.9), random.uniform(0, 0.9)))
 
         for _ in range(num):
             if self.network.execute_network():

@@ -41,11 +41,12 @@ class Names:
     def __init__(self):
         """Initialise names list."""
         self.error_code_count = 0  # how many error codes have been declared
-        self.names = [] # initialize name list
+        self.names = []  # initialize name list
 
     def unique_error_codes(self, num_error_codes):
         """Return a list of unique integer error codes."""
-        if not isinstance(num_error_codes, int): #isinstance used to check the class of the object
+        if not isinstance(num_error_codes, int):
+            # isinstance used to check the class of the object
             raise TypeError("Expected num_error_codes to be an integer.")
         self.error_code_count += num_error_codes
 
@@ -57,37 +58,34 @@ class Names:
 
         If the name string is not present in the names list, return None.
         """
-        #input error handling
+        # input error handling
         if type(name_string) != str:
             print('Convert non-string input into string')
             name_string = str(name_string)
-            #name error handling 
+            # name error handling
         if not name_string.isalnum():
             raise SyntaxError("name_string is not alphanumeric")
         elif name_string.isdigit():
-            raise SyntaxError("name_string is a digit, must be alphanumber string")
-        #Return name id or None
+            raise SyntaxError("name_string must be alphanumber string")
+        # Return name id or None
         elif name_string in self.names:
             id = self.names.index(name_string)
             return id
         else:
             return None
-        
-
-            
 
     def lookup(self, name_string_list):
         """Return a list of name IDs for each name string in name_string_list.
 
         If the name string is not present in the names list, add it.
         """
-        #Input error handling
+        # Input error handling
         if not isinstance(name_string_list, list):
             raise TypeError("Expected list input.")
 
-        ids=[]
+        ids = []
         for name_string in name_string_list:
-            #Not present, add it
+            # Not present, add it
             if name_string not in self.names:
                 self.names.append(name_string)
                 id = self.names.index(name_string)
@@ -95,9 +93,6 @@ class Names:
                 id = self.names.index(name_string)
             ids.append(id)
         return ids
-
-
-
 
     def get_name_string(self, name_id):
         """Return the corresponding name string for name_id.
@@ -109,5 +104,5 @@ class Names:
 
         try:
             return self.names[name_id]
-        except IndexError: #out of range
+        except IndexError:  # out of range
             return None
