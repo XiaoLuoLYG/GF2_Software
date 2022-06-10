@@ -61,10 +61,10 @@ def test_lookup_unique_id(used_names, name_string_list):
         for j in range(0, 2):
             if i != j:
                 assert not used_names.query(
-                    name_string_list[i]) == used_names.query(name_string_list[j])
+            name_string_list[i]) == used_names.query(name_string_list[j])
             elif i == j:
                 assert used_names.query(
-                    name_string_list[i]) == used_names.query(name_string_list[j])
+            name_string_list[i]) == used_names.query(name_string_list[j])
             else:
                 break
 
@@ -88,7 +88,8 @@ def test_query_raises_exceptions(used_names):
 
 
 def test_combination_funcs(name_string_list, used_names):
-    """Check that the query function on a single string works the same as the lookup function on an index list"""
+    """Check that the query function on a single string
+    works the same as the lookup function on an index list"""
     i = 0
     for name in name_string_list:
         assert used_names.lookup([name])[0] == used_names.query(name)
@@ -98,7 +99,8 @@ def test_combination_funcs(name_string_list, used_names):
 
 
 def test_types(used_names, name_string_list):
-    """Makes sure that the expected type of value is coming out of the three main functions"""
+    """Makes sure that the expected type of value is coming
+    out of the three main functions"""
     i = 0
     while i <= 2:
         assert (type(used_names.get_name_string(

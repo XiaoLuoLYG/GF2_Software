@@ -2,7 +2,8 @@
 import pytest
 from names import Names
 from scanner import Scanner
-# from main_project.error import SyntaxError, SemanticError, ValueError, UnclassedError
+# from main_project.error import SyntaxError,
+# SemanticError, ValueError, UnclassedError
 
 '''Test the scanner module'
 
@@ -37,7 +38,6 @@ def no_spaces():
     return ["d", "e", "v", "i", "c", "e", "7", ",", "1", "2", "h", "a", "s"]
 
 
-
 def test_new_scanned_item_functionality(new_names):
     """Test that a file not found error works"""
     with pytest.raises(FileNotFoundError):
@@ -62,7 +62,8 @@ def test_advance(new_scanner, no_spaces):
 
 
 def test_get_name_and_num(new_scanner, new_names):
-    """check that the get_name function gives out a valid name and the next character,
+    """check that the get_name function gives out
+    a valid name and the next character,
     check that the name is an alphanumerical string"""
     new_scanner.skip_spaces()
     name = new_scanner.get_name()
@@ -76,9 +77,9 @@ def test_get_name_and_num(new_scanner, new_names):
     assert number[1] == " "
 
 
-@pytest.mark.parametrize("data, expected_output_type, expected_output_id", 
-                         [("Device",4, 0), ("NAND", 8, 8), ("device", 4, 1),
-                           ("A12J", 8, 8), (";", 1, None), ("12", 5, '12')])
+@pytest.mark.parametrize("data, expected_output_type, expected_output_id",
+                         [("Device", 4, 0), ("NAND", 8, 8), ("device", 4, 1),
+                          ("A12J", 8, 8), (";", 1, None), ("12", 5, '12')])
 def test_get_symbol(new_names, data, expected_output_type, expected_output_id):
     """Test that names, numbers, symbols and keywords are all
     initialised and stored in the right sections"""
@@ -98,19 +99,21 @@ def test_dot_recognition(new_names):
 
 def test_get_symbol_ignore():
     empty_names = Names()
-    """check that the words in the scanner.ignore list are not appended to the name class"""
+    """check that the words in the scanner.
+    ignore list are not appended to the name class"""
     test_strings = ('gates', 'gate', 'initially', '  initially', "cycles")
     before = len(empty_names.names)
     for word in test_strings:
         test_scan = Scanner(word, empty_names, True)
-        # this will make symbols for all 10 defined symbols, but none for the ignored strings inputed
+        # this will make symbols for all 10 defined symbols,
+        # but none for the ignored strings inputed
         val = test_scan.get_symbol()
         assert val.type is None
     after_num = len(empty_names.names)
     assert before + 8 == after_num
-    assert empty_names.names == ["Device", "device", "Connection", "Monitor", "is", "are", "input", 
-         "connect"]
-         
+    assert empty_names.names == ["Device", "device", "Connection",
+                                 "Monitor", "is", "are", "input",
+                                 "connect"]
 
 
 def test_wordcount(new_names):
@@ -130,15 +133,17 @@ def test_wordcount(new_names):
     after.append(test_scan.word_number)
     print(after)
     print(before)
-    assert after[0] == before[0] + 3 #name list length (no keywords or dot etc.)
-    assert after[1] == before[1] + 5 #word number
+    assert after[0] == before[0] + 3
+    # name list length (no keywords or dot etc.)
+    assert after[1] == before[1] + 5  # word number
 
 
 def test_non_valid_symbol(new_names):
-    """Test that the non valid characters and names raise the approrpiate errors"""
+    """Test that the non valid characters and
+    names raise the approrpiate errors"""
     with pytest.raises(SyntaxError):
         Scanner(" +", new_names, True).get_symbol()  # + is not a valid symbol
-        #Scanner(" 4fjd", new_names, True).get_symbol() #non alphanumeric
+        # Scanner(" 4fjd", new_names, True).get_symbol() #non alphanumeric
 
 
 @pytest.mark.parametrize("inputs, outputs", [("#hello \nh", "\n"),
@@ -149,4 +154,3 @@ def test_comments(inputs, outputs, new_names):
     new_scan.get_symbol()
     out = new_scan.current_character
     assert out == outputs
-
