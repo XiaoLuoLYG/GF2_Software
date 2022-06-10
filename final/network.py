@@ -108,7 +108,9 @@ class Network:
                 return device.outputs[output_id]
         return None
 
-    def make_connection(self, first_device_id, first_port_id, second_device_id, second_port_id):
+    def make_connection(self, first_device_id,
+                        first_port_id, second_device_id,
+                        second_port_id):
         """Connect the first device to the second device.
 
         Return self.NO_ERROR if successful, or the corresponding error if not.
@@ -154,7 +156,9 @@ class Network:
 
         return error_type
 
-    def break_connection(self, first_device_id, first_port_id, second_device_id, second_port_id):
+    def break_connection(self, first_device_id,
+                         first_port_id, second_device_id,
+                         second_port_id):
         """Break the connection between the first device and the second device.
         Return self.NO_ERROR if successful, or the corresponding error if not.
         """
@@ -162,17 +166,19 @@ class Network:
         second_device = self.devices.get_device(second_device_id)
 
         if first_port_id in first_device.inputs:
-            if first_device.inputs[first_port_id] == (second_device_id,second_port_id):
+            if first_device.inputs[first_port_id] == (second_device_id,
+                                                      second_port_id):
                 first_device.inputs[first_port_id] = None
                 error_type = self.NO_ERROR
 
         elif first_port_id in first_device.outputs:
-            if second_device.inputs[second_port_id] == (first_device_id,first_port_id):
+            if second_device.inputs[second_port_id] == (first_device_id,
+                                                        first_port_id):
                 second_device.inputs[second_port_id] = None
                 error_type = self.NO_ERROR
         else:
             error_type = self.OUTPUT_TO_OUTPUT
-             
+
     def check_network(self):
         """Return True if all inputs in the network are connected."""
         for device_id in self.devices.find_devices():
@@ -238,7 +244,8 @@ class Network:
 
         The rule is: if all its inputs are x, then its output is y, else its
         output is the inverse of y.
-        Note: (x,y) pairs for AND, OR, NOR, NAND, XOR, NOT are: (HIGH, HIGH), (LOW,
+        Note: (x,y) pairs for AND, OR, NOR, NAND, XOR, NOT
+        are: (HIGH, HIGH), (LOW,
         LOW), (LOW, HIGH), (HIGH, LOW), (None, None), (LOW, LOW).
         Return True if successful.
         """
